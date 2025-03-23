@@ -2,7 +2,7 @@ name: Generate and Deploy News Articles
 
 on:
   schedule:
-    - cron: "0 */1 * * *" # 6時間ごとに実行（任意で調整）
+    - cron: "0 */1 * * *" # 1時間ごとに実行（任意で調整）
   workflow_dispatch: # 手動実行も可能にする
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
       env:
         GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
       run: |
-        python script.py
+        python enchanced_news_generator.py
 
     - name: Commit and push changes
       run: |
