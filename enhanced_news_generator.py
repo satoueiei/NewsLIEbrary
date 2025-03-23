@@ -8,7 +8,9 @@ from datetime import datetime
 import markdown
 
 # Geminiと接続
-GOOGLE_API_KEY = 'AIzaSyBj93AYpuJFPG5bjfzh-miAp36qp0z10Qo'
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    raise ValueError("GOOGLE_API_KEY environment variable is not set")
 genai.configure(api_key=GOOGLE_API_KEY)
 
 def generate_news_article():
