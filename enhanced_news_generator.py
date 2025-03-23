@@ -202,7 +202,7 @@ def generate_index_page(articles_metadata):
 def update_website():
     """ウェブサイト全体を更新"""
     base_dir = "content"
-    public_dir = "public"
+    public_dir = "docs"
     os.makedirs(public_dir, exist_ok=True)
     
     # すべての記事メタデータを収集
