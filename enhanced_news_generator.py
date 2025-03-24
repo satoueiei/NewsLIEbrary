@@ -4,13 +4,32 @@ import requests
 import random
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import markdown
 import re
+from random import choice
 
 # Geminiと接続
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
+
+def load_articles_json():
+    json_path = "docs/articles.json"
+    if os.path.exists(json_path):
+        with open(json_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def find_sequel_candidate(articles, days_threshold=30):
+    now = datetime.now()
+    candidates = []
+    for article in articles:
+        if "Y" in article.get("sequel","N"):
+            article_date = datetime.strptime(article["date"], "%Y-%m-%d")
+            days_elapsed = (now - article_date).days
+            if days_elapsed >= days_threshold:
+                candidates.append(article)
+    return choice(candidates) if candidates else None
 
 def generate_news_article():
     feed = feedparser.parse('https://trends.google.co.jp/trending/rss?geo=JP')
@@ -60,7 +79,15 @@ def generate_news_article():
     
     response = model.generate_content(prompt)
     content = response.text
+
+    #続きそうか判定
+    question=f"以下のニュース記事を読み、続きの記事が後日出そうであるかを判断してください。出そうだと思った場合には”Y”、出ないと思った場合には”N”とだけ答えてください。　{content}"
+    ansewer=model.generate_content(question)
+    sequel=ansewer.text
     
+    
+    
+
     title_match = re.search(r"^\s*#+\s*【News LIE-brary】[^\n]+", content, re.MULTILINE)
     article_title = title_match.group(0).replace("#", "").strip() if title_match else "無題の記事"
     
@@ -71,9 +98,57 @@ def generate_news_article():
         "wiki_title": wiki_title,
         "personality": personality,
         "timestamp": now.timestamp(),
-        "title": article_title
+        "title": article_title,
+        "sequel": sequel
     }
     
+    return content, metadata
+
+def generate_sequel_article(prev_article):
+    # 前回の記事内容を読み込む
+    prev_url = prev_article["url"]
+    prev_md_path = os.path.join("content", prev_url.replace(".html", ".md"))
+    with open(prev_md_path, "r", encoding="utf-8") as f:
+        prev_content = f.read()
+
+    model = genai.GenerativeModel("gemini-2.0-pro-exp-02-05")
+    now = datetime.now()
+    date_string = now.strftime("%Y年%m月%d日")
+    time_string = now.strftime("%H:%M")
+
+    # 続編用のプロンプト
+    prompt = f"""架空のニュースサイト、「News LIE-brary」に載せるための、前回の記事「{prev_article['title']}」を参考にした、続報を期待させられる、もしくは続報が出ないと誤解無く判断させられる、架空のネットニュースをマークダウン形式で作ってください。前回の記事の内容は以下です：\n{prev_content}\nテーマは「{prev_article['theme']}」と「{prev_article['wiki_title']}」を引き継ぎ、「{prev_article['personality']}」風の文体で、1000~2000字程度を参考にしてください。タイトルをつけ、タイトルにはニュースサイトの名前を【】で囲んだものと【続報】を、h1として必ず記述してください。日付は {date_string} とし、記事の一番上に表示してください。ただし、前回の記事へのリンクおよびニュースサイトのほかの部分でこれが架空であることを示しますので、記事本文には前回の記事へのリンクと、これが架空であることを示す内容は入れないこととします。回答はニュース記事部分だけにしてください。"""
+
+    response = model.generate_content(prompt)
+    content = response.text
+
+    # 続編かどうかの判定
+    question = f"以下のニュース記事の文章を読み、続きの記事が後日出そうであるかを判断してください。出そうだと思った場合には”Y”、出ないと思った場合には”N”とだけ答えてください。\n{content}"
+    answer = model.generate_content(question)
+    sequel = answer.text
+
+    # メタデータを作成
+    metadata = {
+        "date": now.strftime("%Y-%m-%d"),
+        "time": time_string,
+        "theme": prev_article["theme"],
+        "wiki_title": prev_article["wiki_title"],
+        "personality": prev_article["personality"],
+        "timestamp": now.timestamp(),
+        "title": re.search(r"^\s*#+\s*【News LIE-brary】[^\n]+", content, re.MULTILINE).group(0).replace("#", "").strip() if re.search(r"^\s*#+\s*【News LIE-brary】[^\n]+", content, re.MULTILINE) else "無題の記事",
+        "sequel": sequel,
+        "prev_url": prev_article["url"]  # 前回記事へのリンクをメタデータに追加
+    }
+
+    # 元の記事のメタデータを更新（"sequel"を"C"に）
+    prev_json_path = os.path.join("content", prev_url.replace(".html", ".json"))
+    if os.path.exists(prev_json_path):
+        with open(prev_json_path, "r", encoding="utf-8") as f:
+            prev_metadata = json.load(f)
+        prev_metadata["sequel"] = "C"  # 続編作成済みに更新
+        with open(prev_json_path, "w", encoding="utf-8") as f:
+            json.dump(prev_metadata, f, ensure_ascii=False, indent=2)
+
     return content, metadata
 
 def save_article(content, metadata):
@@ -99,7 +174,10 @@ def generate_html_from_markdown(md_content, metadata):
     html_content = markdown.markdown(md_content)
     
     article_title = metadata.get('title', '無題の記事')
-    
+
+    # 続編の場合、前回記事へのリンクを追加（なくても動作するように）
+    prev_link = f'<p><a href="../../{metadata["prev_url"]}">前回の記事を読む</a></p>' if "prev_url" in metadata else ""
+
     html_template = f"""<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -118,13 +196,14 @@ def generate_html_from_markdown(md_content, metadata):
 <body>
     <header>
         <h1>大滑子帝国広報部</h1>
-        <p>ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
+        <p>帝国ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
         
     </header>
     <main>
         <article>
             {html_content}
+            {prev_link}  <!-- 続編の場合に前回記事へのリンクを追加 -->
         </article>
         <div class="metadata">
             <p>テーマ: {metadata['theme']} x {metadata['wiki_title']}</p>
@@ -157,7 +236,10 @@ def generate_index_page(articles_metadata):
             "url": f"{year}/{month}/{filename_base}.html",
             "date": article_date,
             "personality": article["personality"],
-            "timestamp": article["timestamp"]
+            "timestamp": article["timestamp"],
+            "sequel": article.get("sequel","N"),
+            "theme": article["theme"],
+            "wiki_title": article["wiki_title"]
         })
     
     # JSONファイルとして保存
@@ -213,7 +295,7 @@ def generate_index_page(articles_metadata):
 <body>
     <header>
         <h1>大滑子帝国広報部</h1>
-        <p>「News LIE-brary」のアーカイブ</p>
+        <p>「News LIE-brary」として配信されたニュース記事をアーカイブしたものです。</p>
         <p><a href="./bookmark.html">ブックマーク</a></p>
     </header>
     <main>
@@ -419,8 +501,23 @@ def update_website():
         f.write(index_html)
 
 def main():
-    content, metadata = generate_news_article()
-    
+    # 既存の記事を読み込む
+    articles = load_articles_json()
+    sequel_candidate = find_sequel_candidate(articles, days_threshold=30)
+
+    if sequel_candidate:
+        # 続編候補が見つかった場合、確率で続編か通常記事かを選択
+        if random.random() < 0.1:  # 10%の確率で続編を生成
+            print(f"続編を生成します: {sequel_candidate['title']}")
+            content, metadata = generate_sequel_article(sequel_candidate)
+        else:
+            print("続編候補が見つかりましたが、今回は通常の記事を生成します")
+            content, metadata = generate_news_article()
+    else:
+        # 通常の記事を生成
+        print("通常の記事を生成します")
+        content, metadata = generate_news_article()
+
     content_path, metadata_path = save_article(content, metadata)
     print(f"記事を保存しました: {content_path}")
     
