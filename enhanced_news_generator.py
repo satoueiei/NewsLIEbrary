@@ -174,21 +174,32 @@ def generate_html_from_markdown(md_content, metadata):
     html_content = markdown.markdown(md_content)
     
     article_title = metadata.get('title', '無題の記事')
-
-    # 続編の場合、前回記事へのリンクを追加（なくても動作するように）
     prev_link = f'<p><a href="../../{metadata["prev_url"]}">前回の記事を読む</a></p>' if "prev_url" in metadata else ""
 
     # articles.jsonから全記事のリストを読み込む
     articles = load_articles_json()
-    sorted_articles = sorted(articles, key=lambda x: x["timestamp"])  # タイムスタンプ順にソート
+    # 日付を基準にソート（同一日付内ではタイムスタンプでさらにソート）
+    sorted_articles = sorted(articles, key=lambda x: (x["date"], x["timestamp"]))
     current_url = f"{metadata['date'][:4]}/{metadata['date'][5:7]}/{metadata['date']}-{int(metadata['timestamp'])}.html"
     
     # 現在の記事のインデックスを見つける
     current_index = next((i for i, article in enumerate(sorted_articles) if article["url"] == current_url), -1)
     
-    # 前後の記事のURLを取得
-    prev_article_url = sorted_articles[current_index - 1]["url"] if current_index > 0 else None
-    next_article_url = sorted_articles[current_index + 1]["url"] if current_index < len(sorted_articles) - 1 else None
+    # 前後の記事を特定（日付が異なるものに限定）
+    prev_article_url = None
+    next_article_url = None
+    
+    # 前の記事（現在の日付より古い最初の記事）
+    for i in range(current_index - 1, -1, -1):
+        if sorted_articles[i]["date"] < metadata["date"]:
+            prev_article_url = sorted_articles[i]["url"]
+            break
+    
+    # 次の記事（現在の日付より新しい最初の記事）
+    for i in range(current_index + 1, len(sorted_articles)):
+        if sorted_articles[i]["date"] > metadata["date"]:
+            next_article_url = sorted_articles[i]["url"]
+            break
 
     # ナビゲーションHTMLを生成
     navigation_html = '<div class="article-navigation">'
@@ -226,12 +237,12 @@ def generate_html_from_markdown(md_content, metadata):
         <h1>大滑子帝国広報部</h1>
         <p>帝国ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
-        {navigation_html}  <!-- 前後の記事へのナビゲーション -->
+        {navigation_html}  <!-- ナビゲーションを本文とメタデータの間に配置 -->
     </header>
     <main>
         <article>
             {html_content}
-            {prev_link}  <!-- 続編の場合に前回記事へのリンクを追加 -->
+            {prev_link}
         </article>
         
         <div class="metadata">
@@ -241,7 +252,7 @@ def generate_html_from_markdown(md_content, metadata):
         </div>
     </main>
     <footer>
-        {navigation_html}  <!-- 前後の記事へのナビゲーション -->
+        {navigation_html}  <!-- ナビゲーションを本文とメタデータの間に配置 -->
         <p>このニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
     </footer>
