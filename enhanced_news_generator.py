@@ -119,6 +119,8 @@ def generate_html_from_markdown(md_content, metadata):
     <header>
         <h1>大滑子帝国広報部</h1>
         <p>ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
+        <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
+        
     </header>
     <main>
         <article>
@@ -140,204 +142,241 @@ def generate_html_from_markdown(md_content, metadata):
     return html_template
 
 def generate_index_page(articles_metadata):
+    # 記事メタデータをJSONとして保存する準備（別ファイルに出力）
     sorted_articles = sorted(articles_metadata, key=lambda x: x["timestamp"], reverse=True)
     
-    # 日付ごとに記事をグループ化
-    articles_by_date = {}
+    # JSONデータを作成
+    articles_json = []
     for article in sorted_articles:
-        date = article["date"]
-        if date not in articles_by_date:
-            articles_by_date[date] = []
-        articles_by_date[date].append(article)
+        article_date = article["date"]
+        year = article_date[:4]
+        month = article_date[5:7]
+        filename_base = f"{article_date}-{int(article['timestamp'])}"
+        articles_json.append({
+            "title": article.get('title', '無題の記事'),
+            "url": f"{year}/{month}/{filename_base}.html",
+            "date": article_date,
+            "personality": article["personality"],
+            "timestamp": article["timestamp"]
+        })
     
-    # 日付リストをドロップダウン用に生成（新しい順）
-    date_options = '<option value="">すべての日付</option>\n'
-    for date in sorted(articles_by_date.keys(), reverse=True):
-        date_options += f'<option value="{date}">{date}</option>\n'
+    # JSONファイルとして保存
+    with open("docs/articles.json", "w", encoding="utf-8") as f:
+        json.dump(articles_json, f, ensure_ascii=False, indent=2)
     
-    # 記事リストを新しい日付順に生成
-    article_list_html = ""
-    for date in sorted(articles_by_date.keys(), reverse=True):
-        articles = articles_by_date[date]
-        article_list_html += f'<div class="date-section" data-date="{date}"><h2>{date}</h2>\n<ul>\n'
-        for article in articles:
-            article_date = article["date"]
-            year = article_date[:4]
-            month = article_date[5:7]
-            filename_base = f"{article_date}-{int(article['timestamp'])}"
-            article_title = article.get('title', '無題の記事')
-            article_list_html += f"""
-            <li class="article-item" data-title="{article_title}" data-date="{article_date}" data-personality="{article['personality']}">
-                <a href="{year}/{month}/{filename_base}.html">
-                    {article_title} ({article['personality']}風)
-                </a>
-                <span class="date">{article_date}</span>
-            </li>
-            """
-        article_list_html += "</ul></div>\n"
-    
-    index_html = f"""<!DOCTYPE html>
+    # コンパクトなindex.htmlテンプレート
+    index_html = """<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>大滑子帝国広報部 - アーカイブ</title>
     <style>
-        body {{ font-family: 'Helvetica', 'Arial', sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }}
-        header {{ border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; }}
-        footer {{ margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 0.8em; color: #666; }}
-        ul {{ list-style-type: none; padding: 0; }}
-        li {{ margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }}
-        .date {{ color: #666; font-size: 0.9em; margin-left: 10px; }}
-        #search-bar {{ width: 70%; padding: 10px; margin-bottom: 10px; font-size: 1em; }}
-        #date-filter {{ width: 25%; padding: 10px; margin-bottom: 10px; font-size: 1em; margin-left: 5px; }}
-        h2 {{ color: #333; margin-top: 20px; }}
-        .hidden {{ display: none; }}
-        .filter-container {{ display: flex; align-items: center; gap: 10px; }}
-        .pagination {{ margin-top: 20px; text-align: center; }}
-        .pagination button {{ padding: 5px 10px; margin: 0 5px; cursor: pointer; }}
-        .pagination button:disabled {{ cursor: not-allowed; opacity: 0.5; }}
-        #page-select {{ padding: 5px; margin: 0 10px; }}
+        body { font-family: 'Helvetica', 'Arial', sans-serif; line-height: 1.4; max-width: 800px; margin: 0 auto; padding: 10px; }
+        header { border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; }
+        footer { margin-top: 20px; border-top: 1px solid #ddd; padding-top: 5px; font-size: 0.8em; color: #666; }
+        ul { list-style-type: none; padding: 0; margin: 0; }
+        li { padding: 5px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .filter-container { display: flex; gap: 5px; margin-bottom: 10px; }
+        #search-bar { width: 70%; padding: 5px; font-size: 0.9em; }
+        #date-filter { width: 30%; padding: 5px; font-size: 0.9em; }
+        .pagination { margin-top: 10px; text-align: center; }
+        .pagination button { padding: 3px 8px; margin: 0 3px; cursor: pointer; }
+        .pagination span { margin: 0 5px; font-size: 0.9em; }
+        .pagination input { width: 50px; padding: 3px; text-align: center; }
+        .bookmark-btn{ 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 2px 5px; 
+            cursor: pointer; 
+            font-size: 0.8em; 
+            border-radius: 2px; 
+        }
+        .bookmark-btn.bookmarked{ 
+            background: #af4c4c; 
+            color: white; 
+            border: none; 
+            padding: 2px 5px; 
+            cursor: pointer; 
+            font-size: 0.8em; 
+            border-radius: 2px; 
+        }
+        .bookmark-btn:hover { background: #45a049; }
+        .bookmark-btn.bookmarked:hover { background: #a04545; }
+        a { text-decoration: none; color: #0066cc; word-wrap: break-word; max-width: 80%; } /* タイトル折り返し */
+        a:hover { text-decoration: underline; }
+        .hidden { display: none; }
+        h2 { margin: 10px 0 5px; font-size: 1.2em; color: #333; } /* 日付見出し */
     </style>
 </head>
 <body>
     <header>
-        <h1>大滑子帝国広報部 - アーカイブ</h1>
-        <p>ニュースサイト「News LIE-brary」のニュース記事のアーカイブです</p>
+        <h1>大滑子帝国広報部</h1>
+        <p>「News LIE-brary」のアーカイブ</p>
+        <p><a href="./bookmark.html">ブックマーク</a></p>
     </header>
     <main>
         <div class="filter-container">
-            <input type="text" id="search-bar" placeholder="記事を検索...">
-            <select id="date-filter">
-                {date_options}
-            </select>
+            <input type="text" id="search-bar" placeholder="検索...">
+            <select id="date-filter"><option value="">全日付</option></select>
         </div>
-        <div id="article-list">
-            {article_list_html}
-        </div>
+        <div id="article-list"></div>
         <div class="pagination">
-            <button id="prev-page" disabled>前へ</button>
-            <select id="page-select"></select>
-            <button id="next-page">次へ</button>
+            <button id="prev-page" disabled>◀</button>
+            <span id="page-info">ページ 1</span>
+            <input type="number" id="page-input" min="1" placeholder="ページ">
+            <button id="go-page">移動</button>
+            <button id="next-page">▶</button>
         </div>
     </main>
     <footer>
-        <p>このサイトのすべてのニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
+        <p>このサイトのニュースはフィクションです。</p>
     </footer>
+    <script src="bookmark.js"></script>
     <script>
         const searchBar = document.getElementById('search-bar');
         const dateFilter = document.getElementById('date-filter');
-        const articleItems = document.querySelectorAll('.article-item');
-        const dateSections = document.querySelectorAll('.date-section');
+        const articleList = document.getElementById('article-list');
         const prevPageBtn = document.getElementById('prev-page');
         const nextPageBtn = document.getElementById('next-page');
-        const pageSelect = document.getElementById('page-select');
+        const pageInfo = document.getElementById('page-info');
+        const pageInput = document.getElementById('page-input');
+        const goPageBtn = document.getElementById('go-page');
         
-        const itemsPerPage = 10; // 1ページあたりの表示件数
+        const itemsPerPage = 10;
         let currentPage = 1;
+        let articles = [];
         
-        function filterArticles() {{
+        fetch('./articles.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTPエラー: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                articles = data;
+                populateDateFilter();
+                renderArticles();
+            })
+            .catch(error => {
+                console.error('JSON読み込みエラー:', error);
+                articleList.innerHTML = '<p>記事データを読み込めませんでした。</p>';
+            });
+        
+        function populateDateFilter() {
+            const dates = [...new Set(articles.map(a => a.date))].sort().reverse();
+            dates.forEach(date => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.textContent = date;
+                dateFilter.appendChild(option);
+            });
+        }
+        
+        function renderArticles() {
             const query = searchBar.value.toLowerCase();
             const selectedDate = dateFilter.value;
-            let visibleItems = [];
-            
-            dateSections.forEach(section => {{
-                const sectionDate = section.getAttribute('data-date');
-                let hasVisibleItems = false;
-                
-                section.querySelectorAll('.article-item').forEach(item => {{
-                    const title = item.getAttribute('data-title').toLowerCase();
-                    const date = item.getAttribute('data-date');
-                    const personality = item.getAttribute('data-personality').toLowerCase();
-                    
-                    const matchesSearch = query === '' || 
-                        title.includes(query) || 
-                        date.includes(query) || 
-                        personality.includes(query);
-                    const matchesDate = selectedDate === '' || date === selectedDate;
-                    
-                    if (matchesSearch && matchesDate) {{
-                        item.classList.remove('hidden');
-                        visibleItems.push(item);
-                        hasVisibleItems = true;
-                    }} else {{
-                        item.classList.add('hidden');
-                    }}
-                }});
-                
-                section.classList.toggle('hidden', !hasVisibleItems);
-            }});
-            
-            return visibleItems;
-        }}
-        
-        function updatePagination() {{
-            const visibleItems = filterArticles();
-            const totalItems = visibleItems.length;
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            
-            // 現在のページのアイテムを表示
-            visibleItems.forEach((item, index) => {{
-                const itemPage = Math.floor(index / itemsPerPage) + 1;
-                item.classList.toggle('hidden', itemPage !== currentPage);
-            }});
-            
-            // ページ選択ドロップダウンを更新
-            pageSelect.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {{
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = 'ページ ' + i + ' / ' + totalPages;
-                if (i === currentPage) option.selected = true;
-                pageSelect.appendChild(option);
-            }}
-            
-            // ボタンの状態を更新
+
+            const filteredArticles = articles.filter(a => {
+                const matchesSearch = query === '' || 
+                    a.title.toLowerCase().includes(query) || 
+                    a.date.includes(query) || 
+                    a.personality.toLowerCase().includes(query);
+                const matchesDate = selectedDate === '' || a.date === selectedDate;
+                return matchesSearch && matchesDate;
+            });
+
+            const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedArticles = filteredArticles.slice(start, end);
+
+            const articlesByDate = {};
+            paginatedArticles.forEach(a => {
+                if (!articlesByDate[a.date]) articlesByDate[a.date] = [];
+                articlesByDate[a.date].push(a);
+            });
+
+            articleList.innerHTML = '';
+            Object.keys(articlesByDate).sort().reverse().forEach(date => {
+                const section = document.createElement('div');
+                section.innerHTML = `<h2>${date}</h2>`;
+                const ul = document.createElement('ul');
+                articlesByDate[date].forEach(a => {
+                    const li = document.createElement('li');
+
+                    // ボタン要素を作成
+                    const button = document.createElement('button');
+                    button.classList.add('bookmark-btn');
+                    button.setAttribute('data-title', a.title);
+                    button.setAttribute('data-url', a.url);
+                    button.setAttribute('data-date', a.date);
+
+                    li.innerHTML = `
+                        <a href="${a.url}" title="${a.title} (${a.personality}風, ${a.date})">
+                            ${a.title}
+                        </a>
+                    `;
+
+                    // ボタンをリストに追加
+                    li.appendChild(button);
+                    ul.appendChild(li);
+                });
+                section.appendChild(ul);
+                articleList.appendChild(section);
+            });
+
+            pageInfo.textContent = totalPages > 0 ? `ページ ${currentPage} / ${totalPages}` : '記事なし';
+            pageInput.max = totalPages;
             prevPageBtn.disabled = currentPage === 1;
             nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
-            pageSelect.disabled = totalPages <= 1;
-            
-            // セクションの表示を調整
-            dateSections.forEach(section => {{
-                const hasVisibleItems = Array.from(section.querySelectorAll('.article-item'))
-                    .some(item => !item.classList.contains('hidden'));
-                section.classList.toggle('hidden', !hasVisibleItems);
-            }});
-        }}
+
+            // ★ 記事リスト生成後にブックマークボタンを更新
+            updateBookmarkButtons();
+        }
+
         
-        prevPageBtn.addEventListener('click', () => {{
-            if (currentPage > 1) {{
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
                 currentPage--;
-                updatePagination();
-            }}
-        }});
+                renderArticles();
+            }
+        });
         
-        nextPageBtn.addEventListener('click', () => {{
-            const totalItems = filterArticles().length;
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            if (currentPage < totalPages) {{
-                currentPage++;
-                updatePagination();
-            }}
-        }});
+        nextPageBtn.addEventListener('click', () => {
+            currentPage++;
+            renderArticles();
+        });
         
-        pageSelect.addEventListener('change', () => {{
-            currentPage = parseInt(pageSelect.value);
-            updatePagination();
-        }});
+        goPageBtn.addEventListener('click', () => {
+            const page = parseInt(pageInput.value);
+            const totalPages = Math.ceil(articles.filter(a => 
+                (dateFilter.value === '' || a.date === dateFilter.value) &&
+                (searchBar.value === '' || a.title.toLowerCase().includes(searchBar.value.toLowerCase()) || 
+                 a.date.includes(searchBar.value) || a.personality.toLowerCase().includes(searchBar.value.toLowerCase()))
+            ).length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderArticles();
+            }
+            pageInput.value = ''; // 入力後クリア
+        });
         
-        searchBar.addEventListener('input', () => {{
-            currentPage = 1; // 検索時にページをリセット
-            updatePagination();
-        }});
+        pageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') goPageBtn.click();
+        });
         
-        dateFilter.addEventListener('change', () => {{
-            currentPage = 1; // 日付フィルタ時にページをリセット
-            updatePagination();
-        }});
+        searchBar.addEventListener('input', () => {
+            currentPage = 1;
+            renderArticles();
+        });
         
-        // 初回読み込み時にページネーションを適用
-        updatePagination();
+        dateFilter.addEventListener('change', () => {
+            currentPage = 1;
+            renderArticles();
+        });
     </script>
 </body>
 </html>
@@ -374,6 +413,7 @@ def update_website():
                 with open(html_path, "w", encoding="utf-8") as f:
                     f.write(html_content)
     
+    # index.htmlを生成
     index_html = generate_index_page(all_metadata)
     with open(os.path.join(public_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_html)

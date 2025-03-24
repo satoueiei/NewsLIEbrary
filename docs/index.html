@@ -20,7 +20,18 @@
         .pagination button { padding: 5px 10px; margin: 0 5px; cursor: pointer; }
         .pagination button:disabled { cursor: not-allowed; opacity: 0.5; }
         #page-select { padding: 5px; margin: 0 10px; }
+        .bookmark-btn { 
+        background-color: #4CAF50; 
+        color: white; 
+        border: none; 
+        padding: 5px 10px; 
+        cursor: pointer; 
+        border-radius: 3px; 
+        margin-left: 10px; 
+        }
+        .bookmark-btn:hover { background-color: #45a049; }
     </style>
+    
 </head>
 <body>
     <header>
@@ -41,6 +52,20 @@
             <div class="date-section" data-date="2025-03-24"><h2>2025-03-24</h2>
 <ul>
 
+            <li class="article-item" data-title="【News LIE-brary】比嘉愛未、まさかの「やらせ」告白！？ 全ては壮大なドッキリでした！ ファンも関係者もホッと胸をなでおろす、愛と笑顔の舞台裏" data-date="2025-03-24" data-personality="楽観主義者">
+                <a href="2025/03/2025-03-24-1742785198.html">
+                    【News LIE-brary】比嘉愛未、まさかの「やらせ」告白！？ 全ては壮大なドッキリでした！ ファンも関係者もホッと胸をなでおろす、愛と笑顔の舞台裏 (楽観主義者風)
+                </a>
+                <span class="date">2025-03-24</span>
+            </li>
+            
+            <li class="article-item" data-title="【News LIE-brary】時空を超えた邂逅：成宮寛貴、フィリップ・キャリーの世界を彩る、新たなる表現の地平へ" data-date="2025-03-24" data-personality="アーティスト">
+                <a href="2025/03/2025-03-24-1742782932.html">
+                    【News LIE-brary】時空を超えた邂逅：成宮寛貴、フィリップ・キャリーの世界を彩る、新たなる表現の地平へ (アーティスト風)
+                </a>
+                <span class="date">2025-03-24</span>
+            </li>
+            
             <li class="article-item" data-title="【News LIE-brary】BTS、セサミストリートと夢のコラボ！？ クイズで紐解く異色の組み合わせ！" data-date="2025-03-24" data-personality="クイズマスター">
                 <a href="2025/03/2025-03-24-1742778684.html">
                     【News LIE-brary】BTS、セサミストリートと夢のコラボ！？ クイズで紐解く異色の組み合わせ！ (クイズマスター風)
@@ -118,6 +143,22 @@
     <footer>
         <p>このサイトのすべてのニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
     </footer>
+    <script src="bookmark.js"></script>
+    <script>
+        // 既存のスクリプト（検索やページネーション）はそのまま残す
+        // ブックマークボタンを追加するためのカスタムコード
+        document.querySelectorAll('.article-item').forEach(item => {
+            const title = item.getAttribute('data-title');
+            const url = item.querySelector('a').getAttribute('href');
+            const date = item.getAttribute('data-date');
+            
+            const bookmarkBtn = document.createElement('button');
+            bookmarkBtn.textContent = 'ブックマーク';
+            bookmarkBtn.classList.add('bookmark-btn');
+            bookmarkBtn.onclick = () => addToBookmark(title, url, date);
+            item.appendChild(bookmarkBtn);
+        });
+    </script>
     <script>
         const searchBar = document.getElementById('search-bar');
         const dateFilter = document.getElementById('date-filter');
@@ -232,6 +273,10 @@
         
         // 初回読み込み時にページネーションを適用
         updatePagination();
+        
     </script>
+
+    
+    
 </body>
 </html>

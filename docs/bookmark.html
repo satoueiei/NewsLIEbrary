@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大滑子帝国広報部 - ブックマーク</title>
+    <style>
+        body { font-family: 'Helvetica', 'Arial', sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+        header { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; }
+        footer { margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 0.8em; color: #666; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .date { color: #666; font-size: 0.9em; margin-left: 10px; }
+        .remove-btn { background-color: #ff4444; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .remove-btn:hover { background-color: #cc0000; }
+        #bookmark-list:empty::before { content: "お気に入り記事がありません。"; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>大滑子帝国広報部 - ブックマーク</h1>
+        <p>お気に入りの「News LIE-brary」記事を記録するページです</p>
+    </header>
+    <main>
+        <ul id="bookmark-list">
+            <!-- ブックマークされた記事がここに表示される -->
+        </ul>
+    </main>
+    <script src="bookmark.js"></script>
+    <footer>
+        <p>このサイトのすべてのニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
+        <p class="archive-link"><a href="./index.html">アーカイブに戻る</a></p>
+    </footer>
+
+</body>
+</html>
