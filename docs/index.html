@@ -5,278 +5,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>大滑子帝国広報部 - アーカイブ</title>
     <style>
-        body { font-family: 'Helvetica', 'Arial', sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
-        header { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; }
-        footer { margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 0.8em; color: #666; }
-        ul { list-style-type: none; padding: 0; }
-        li { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-        .date { color: #666; font-size: 0.9em; margin-left: 10px; }
-        #search-bar { width: 70%; padding: 10px; margin-bottom: 10px; font-size: 1em; }
-        #date-filter { width: 25%; padding: 10px; margin-bottom: 10px; font-size: 1em; margin-left: 5px; }
-        h2 { color: #333; margin-top: 20px; }
-        .hidden { display: none; }
-        .filter-container { display: flex; align-items: center; gap: 10px; }
-        .pagination { margin-top: 20px; text-align: center; }
-        .pagination button { padding: 5px 10px; margin: 0 5px; cursor: pointer; }
-        .pagination button:disabled { cursor: not-allowed; opacity: 0.5; }
-        #page-select { padding: 5px; margin: 0 10px; }
-        .bookmark-btn { 
-        background-color: #4CAF50; 
-        color: white; 
-        border: none; 
-        padding: 5px 10px; 
-        cursor: pointer; 
-        border-radius: 3px; 
-        margin-left: 10px; 
+        body { font-family: 'Helvetica', 'Arial', sans-serif; line-height: 1.4; max-width: 800px; margin: 0 auto; padding: 10px; }
+        header { border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; }
+        footer { margin-top: 20px; border-top: 1px solid #ddd; padding-top: 5px; font-size: 0.8em; color: #666; }
+        ul { list-style-type: none; padding: 0; margin: 0; }
+        li { padding: 5px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .filter-container { display: flex; gap: 5px; margin-bottom: 10px; }
+        #search-bar { width: 70%; padding: 5px; font-size: 0.9em; }
+        #date-filter { width: 30%; padding: 5px; font-size: 0.9em; }
+        .pagination { margin-top: 10px; text-align: center; }
+        .pagination button { padding: 3px 8px; margin: 0 3px; cursor: pointer; }
+        .pagination span { margin: 0 5px; font-size: 0.9em; }
+        .pagination input { width: 50px; padding: 3px; text-align: center; }
+        .bookmark-btn{ 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 2px 5px; 
+            cursor: pointer; 
+            font-size: 0.8em; 
+            border-radius: 2px; 
         }
-        .bookmark-btn:hover { background-color: #45a049; }
+        .bookmark-btn.bookmarked{ 
+            background: #af4c4c; 
+            color: white; 
+            border: none; 
+            padding: 2px 5px; 
+            cursor: pointer; 
+            font-size: 0.8em; 
+            border-radius: 2px; 
+        }
+        .bookmark-btn:hover { background: #45a049; }
+        .bookmark-btn.bookmarked:hover { background: #a04545; }
+        a { text-decoration: none; color: #0066cc; word-wrap: break-word; max-width: 80%; } /* タイトル折り返し */
+        a:hover { text-decoration: underline; }
+        .hidden { display: none; }
+        h2 { margin: 10px 0 5px; font-size: 1.2em; color: #333; } /* 日付見出し */
     </style>
-    
 </head>
 <body>
     <header>
-        <h1>大滑子帝国広報部 - アーカイブ</h1>
-        <p>ニュースサイト「News LIE-brary」のニュース記事のアーカイブです</p>
+        <h1>大滑子帝国広報部</h1>
+        <p>「News LIE-brary」のアーカイブ</p>
+        <p><a href="./bookmark.html">ブックマーク</a></p>
     </header>
     <main>
         <div class="filter-container">
-            <input type="text" id="search-bar" placeholder="記事を検索...">
-            <select id="date-filter">
-                <option value="">すべての日付</option>
-<option value="2025-03-24">2025-03-24</option>
-<option value="2025-03-23">2025-03-23</option>
-
-            </select>
+            <input type="text" id="search-bar" placeholder="検索...">
+            <select id="date-filter"><option value="">全日付</option></select>
         </div>
-        <div id="article-list">
-            <div class="date-section" data-date="2025-03-24"><h2>2025-03-24</h2>
-<ul>
-
-            <li class="article-item" data-title="【News LIE-brary】比嘉愛未、まさかの「やらせ」告白！？ 全ては壮大なドッキリでした！ ファンも関係者もホッと胸をなでおろす、愛と笑顔の舞台裏" data-date="2025-03-24" data-personality="楽観主義者">
-                <a href="2025/03/2025-03-24-1742785198.html">
-                    【News LIE-brary】比嘉愛未、まさかの「やらせ」告白！？ 全ては壮大なドッキリでした！ ファンも関係者もホッと胸をなでおろす、愛と笑顔の舞台裏 (楽観主義者風)
-                </a>
-                <span class="date">2025-03-24</span>
-            </li>
-            
-            <li class="article-item" data-title="【News LIE-brary】時空を超えた邂逅：成宮寛貴、フィリップ・キャリーの世界を彩る、新たなる表現の地平へ" data-date="2025-03-24" data-personality="アーティスト">
-                <a href="2025/03/2025-03-24-1742782932.html">
-                    【News LIE-brary】時空を超えた邂逅：成宮寛貴、フィリップ・キャリーの世界を彩る、新たなる表現の地平へ (アーティスト風)
-                </a>
-                <span class="date">2025-03-24</span>
-            </li>
-            
-            <li class="article-item" data-title="【News LIE-brary】BTS、セサミストリートと夢のコラボ！？ クイズで紐解く異色の組み合わせ！" data-date="2025-03-24" data-personality="クイズマスター">
-                <a href="2025/03/2025-03-24-1742778684.html">
-                    【News LIE-brary】BTS、セサミストリートと夢のコラボ！？ クイズで紐解く異色の組み合わせ！ (クイズマスター風)
-                </a>
-                <span class="date">2025-03-24</span>
-            </li>
-            </ul></div>
-<div class="date-section" data-date="2025-03-23"><h2>2025-03-23</h2>
-<ul>
-
-            <li class="article-item" data-title="【News LIE-brary】ポルトガルで大騒動！？ 秘密結社「グリューンスフェルト」の影、イケメン王子と美女スパイの禁断の恋…そして消えた秘宝！" data-date="2025-03-23" data-personality="ゴシップ好き">
-                <a href="2025/03/2025-03-23-1742771578.html">
-                    【News LIE-brary】ポルトガルで大騒動！？ 秘密結社「グリューンスフェルト」の影、イケメン王子と美女スパイの禁断の恋…そして消えた秘宝！ (ゴシップ好き風)
-                </a>
-                <span class="date">2025-03-23</span>
-            </li>
-            
-            <li class="article-item" data-title="【News LIE-brary】斎藤知事、"ダイマジン"警部補と電撃タッグ！？ 県政にメス、悪を斬る！" data-date="2025-03-23" data-personality="ヒーロー気取り">
-                <a href="2025/03/2025-03-23-1742768042.html">
-                    【News LIE-brary】斎藤知事、"ダイマジン"警部補と電撃タッグ！？ 県政にメス、悪を斬る！ (ヒーロー気取り風)
-                </a>
-                <span class="date">2025-03-23</span>
-            </li>
-            
-            <li class="article-item" data-title="【News LIE-brary】井桁弘恵、天保町でまさかの発見！？ クイズ王も唸る「歴史的珍事」とは" data-date="2025-03-23" data-personality="クイズマスター">
-                <a href="2025/03/2025-03-23-1742764350.html">
-                    【News LIE-brary】井桁弘恵、天保町でまさかの発見！？ クイズ王も唸る「歴史的珍事」とは (クイズマスター風)
-                </a>
-                <span class="date">2025-03-23</span>
-            </li>
-            
-            <li class="article-item" data-title="【News LIE-brary】速報！聖子ちゃん、傷彦と電撃合体！？ 世紀のデュエットソング「硝子の抱擁」で、全米チャートも抱擁寸前か！？" data-date="2025-03-23" data-personality="お笑い芸人">
-                <a href="2025/03/2025-03-23-1742760875.html">
-                    【News LIE-brary】速報！聖子ちゃん、傷彦と電撃合体！？ 世紀のデュエットソング「硝子の抱擁」で、全米チャートも抱擁寸前か！？ (お笑い芸人風)
-                </a>
-                <span class="date">2025-03-23</span>
-            </li>
-            
-            <li class="article-item" data-title="【News LIE-brary】美食外交の妙味：亀梨和也、アルバ選手団を魅了した「和」の真髄" data-date="2025-03-23" data-personality="美食家">
-                <a href="2025/03/2025-03-23-1742757122.html">
-                    【News LIE-brary】美食外交の妙味：亀梨和也、アルバ選手団を魅了した「和」の真髄 (美食家風)
-                </a>
-                <span class="date">2025-03-23</span>
-            </li>
-            
-            <li class="article-item" data-title="【News LIE-brary】亀梨和也、世界的ダンサー ルイ・プザンと夢の共演！？ おばちゃんもビックリ仰天！" data-date="2025-03-23" data-personality="おばちゃん">
-                <a href="2025/03/2025-03-23-1742753868.html">
-                    【News LIE-brary】亀梨和也、世界的ダンサー ルイ・プザンと夢の共演！？ おばちゃんもビックリ仰天！ (おばちゃん風)
-                </a>
-                <span class="date">2025-03-23</span>
-            </li>
-            
-            <li class="article-item" data-title="【News LIE-brary】打倒資本主義の聖戦士、徐一天、キッザニアを電撃訪問！　ブルジョワ洗脳施設に鉄槌を下す！！" data-date="2025-03-23" data-personality="過激派">
-                <a href="2025/03/2025-03-23-1742749903.html">
-                    【News LIE-brary】打倒資本主義の聖戦士、徐一天、キッザニアを電撃訪問！　ブルジョワ洗脳施設に鉄槌を下す！！ (過激派風)
-                </a>
-                <span class="date">2025-03-23</span>
-            </li>
-            
-            <li class="article-item" data-title="【News LIE-brary】速報！カメちゃんが、あの『テンペスト』に出演決定！？！？マジで！？！？！？" data-date="2025-03-23" data-personality="子供っぽい">
-                <a href="2025/03/2025-03-23-1742747847.html">
-                    【News LIE-brary】速報！カメちゃんが、あの『テンペスト』に出演決定！？！？マジで！？！？！？ (子供っぽい風)
-                </a>
-                <span class="date">2025-03-23</span>
-            </li>
-            </ul></div>
-
-        </div>
+        <div id="article-list"></div>
         <div class="pagination">
-            <button id="prev-page" disabled>前へ</button>
-            <select id="page-select"></select>
-            <button id="next-page">次へ</button>
+            <button id="prev-page" disabled>◀</button>
+            <span id="page-info">ページ 1</span>
+            <input type="number" id="page-input" min="1" placeholder="ページ">
+            <button id="go-page">移動</button>
+            <button id="next-page">▶</button>
         </div>
     </main>
     <footer>
-        <p>このサイトのすべてのニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
+        <p>このサイトのニュースはフィクションです。</p>
     </footer>
     <script src="bookmark.js"></script>
     <script>
-        // 既存のスクリプト（検索やページネーション）はそのまま残す
-        // ブックマークボタンを追加するためのカスタムコード
-        document.querySelectorAll('.article-item').forEach(item => {
-            const title = item.getAttribute('data-title');
-            const url = item.querySelector('a').getAttribute('href');
-            const date = item.getAttribute('data-date');
-            
-            const bookmarkBtn = document.createElement('button');
-            bookmarkBtn.textContent = 'ブックマーク';
-            bookmarkBtn.classList.add('bookmark-btn');
-            bookmarkBtn.onclick = () => addToBookmark(title, url, date);
-            item.appendChild(bookmarkBtn);
-        });
-    </script>
-    <script>
         const searchBar = document.getElementById('search-bar');
         const dateFilter = document.getElementById('date-filter');
-        const articleItems = document.querySelectorAll('.article-item');
-        const dateSections = document.querySelectorAll('.date-section');
+        const articleList = document.getElementById('article-list');
         const prevPageBtn = document.getElementById('prev-page');
         const nextPageBtn = document.getElementById('next-page');
-        const pageSelect = document.getElementById('page-select');
+        const pageInfo = document.getElementById('page-info');
+        const pageInput = document.getElementById('page-input');
+        const goPageBtn = document.getElementById('go-page');
         
-        const itemsPerPage = 10; // 1ページあたりの表示件数
+        const itemsPerPage = 10;
         let currentPage = 1;
+        let articles = [];
         
-        function filterArticles() {
+        fetch('./articles.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTPエラー: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                articles = data;
+                populateDateFilter();
+                renderArticles();
+            })
+            .catch(error => {
+                console.error('JSON読み込みエラー:', error);
+                articleList.innerHTML = '<p>記事データを読み込めませんでした。</p>';
+            });
+        
+        function populateDateFilter() {
+            const dates = [...new Set(articles.map(a => a.date))].sort().reverse();
+            dates.forEach(date => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.textContent = date;
+                dateFilter.appendChild(option);
+            });
+        }
+        
+        function renderArticles() {
             const query = searchBar.value.toLowerCase();
             const selectedDate = dateFilter.value;
-            let visibleItems = [];
-            
-            dateSections.forEach(section => {
-                const sectionDate = section.getAttribute('data-date');
-                let hasVisibleItems = false;
-                
-                section.querySelectorAll('.article-item').forEach(item => {
-                    const title = item.getAttribute('data-title').toLowerCase();
-                    const date = item.getAttribute('data-date');
-                    const personality = item.getAttribute('data-personality').toLowerCase();
-                    
-                    const matchesSearch = query === '' || 
-                        title.includes(query) || 
-                        date.includes(query) || 
-                        personality.includes(query);
-                    const matchesDate = selectedDate === '' || date === selectedDate;
-                    
-                    if (matchesSearch && matchesDate) {
-                        item.classList.remove('hidden');
-                        visibleItems.push(item);
-                        hasVisibleItems = true;
-                    } else {
-                        item.classList.add('hidden');
-                    }
+
+            const filteredArticles = articles.filter(a => {
+                const matchesSearch = query === '' || 
+                    a.title.toLowerCase().includes(query) || 
+                    a.date.includes(query) || 
+                    a.personality.toLowerCase().includes(query);
+                const matchesDate = selectedDate === '' || a.date === selectedDate;
+                return matchesSearch && matchesDate;
+            });
+
+            const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedArticles = filteredArticles.slice(start, end);
+
+            const articlesByDate = {};
+            paginatedArticles.forEach(a => {
+                if (!articlesByDate[a.date]) articlesByDate[a.date] = [];
+                articlesByDate[a.date].push(a);
+            });
+
+            articleList.innerHTML = '';
+            Object.keys(articlesByDate).sort().reverse().forEach(date => {
+                const section = document.createElement('div');
+                section.innerHTML = `<h2>${date}</h2>`;
+                const ul = document.createElement('ul');
+                articlesByDate[date].forEach(a => {
+                    const li = document.createElement('li');
+
+                    // ボタン要素を作成
+                    const button = document.createElement('button');
+                    button.classList.add('bookmark-btn');
+                    button.setAttribute('data-title', a.title);
+                    button.setAttribute('data-url', a.url);
+                    button.setAttribute('data-date', a.date);
+
+                    li.innerHTML = `
+                        <a href="${a.url}" title="${a.title} (${a.personality}風, ${a.date})">
+                            ${a.title}
+                        </a>
+                    `;
+
+                    // ボタンをリストに追加
+                    li.appendChild(button);
+                    ul.appendChild(li);
                 });
-                
-                section.classList.toggle('hidden', !hasVisibleItems);
+                section.appendChild(ul);
+                articleList.appendChild(section);
             });
-            
-            return visibleItems;
-        }
-        
-        function updatePagination() {
-            const visibleItems = filterArticles();
-            const totalItems = visibleItems.length;
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            
-            // 現在のページのアイテムを表示
-            visibleItems.forEach((item, index) => {
-                const itemPage = Math.floor(index / itemsPerPage) + 1;
-                item.classList.toggle('hidden', itemPage !== currentPage);
-            });
-            
-            // ページ選択ドロップダウンを更新
-            pageSelect.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = 'ページ ' + i + ' / ' + totalPages;
-                if (i === currentPage) option.selected = true;
-                pageSelect.appendChild(option);
-            }
-            
-            // ボタンの状態を更新
+
+            pageInfo.textContent = totalPages > 0 ? `ページ ${currentPage} / ${totalPages}` : '記事なし';
+            pageInput.max = totalPages;
             prevPageBtn.disabled = currentPage === 1;
             nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
-            pageSelect.disabled = totalPages <= 1;
-            
-            // セクションの表示を調整
-            dateSections.forEach(section => {
-                const hasVisibleItems = Array.from(section.querySelectorAll('.article-item'))
-                    .some(item => !item.classList.contains('hidden'));
-                section.classList.toggle('hidden', !hasVisibleItems);
-            });
+
+            // ★ 記事リスト生成後にブックマークボタンを更新
+            updateBookmarkButtons();
         }
+
         
         prevPageBtn.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
-                updatePagination();
+                renderArticles();
             }
         });
         
         nextPageBtn.addEventListener('click', () => {
-            const totalItems = filterArticles().length;
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                updatePagination();
-            }
+            currentPage++;
+            renderArticles();
         });
         
-        pageSelect.addEventListener('change', () => {
-            currentPage = parseInt(pageSelect.value);
-            updatePagination();
+        goPageBtn.addEventListener('click', () => {
+            const page = parseInt(pageInput.value);
+            const totalPages = Math.ceil(articles.filter(a => 
+                (dateFilter.value === '' || a.date === dateFilter.value) &&
+                (searchBar.value === '' || a.title.toLowerCase().includes(searchBar.value.toLowerCase()) || 
+                 a.date.includes(searchBar.value) || a.personality.toLowerCase().includes(searchBar.value.toLowerCase()))
+            ).length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderArticles();
+            }
+            pageInput.value = ''; // 入力後クリア
+        });
+        
+        pageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') goPageBtn.click();
         });
         
         searchBar.addEventListener('input', () => {
-            currentPage = 1; // 検索時にページをリセット
-            updatePagination();
+            currentPage = 1;
+            renderArticles();
         });
         
         dateFilter.addEventListener('change', () => {
-            currentPage = 1; // 日付フィルタ時にページをリセット
-            updatePagination();
+            currentPage = 1;
+            renderArticles();
         });
-        
-        // 初回読み込み時にページネーションを適用
-        updatePagination();
-        
     </script>
-
-    
-    
 </body>
 </html>
