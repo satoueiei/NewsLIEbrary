@@ -11,6 +11,10 @@
         .metadata { font-size: 0.9em; color: #666; }
         h1 { color: #333; }
         .archive-link { margin-top: 10px; }
+        .article-navigation { margin: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+        .nav-arrow { padding: 8px 15px; text-decoration: none; color: #0066cc; font-weight: bold; }
+        .nav-arrow.disabled { color: #999; pointer-events: none; }
+        .nav-arrow:hover:not(.disabled) { text-decoration: underline; background-color: #f5f5f5; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -18,7 +22,7 @@
         <h1>大滑子帝国広報部</h1>
         <p>帝国ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
-        
+        <div class="article-navigation"><a href="../../2025/03/2025-03-23-1742764350.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-23-1742771578.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
     </header>
     <main>
         <article>
@@ -38,8 +42,9 @@
 <p>「知事と警察官が、法を無視して暴れ回るなんて…」「いくら正義のためとはいえ、やりすぎだ！」「このままでは、兵庫県は無法地帯になってしまう…」</p>
 <p>果たして、斎藤知事と台場警部補の"正義"は、兵庫県を救うことになるのか？それとも、新たな混乱を招くだけなのか？News LIE-brary取材班は、今後も二人の動向を徹底的に追跡していく！</p>
 <p><strong>続報を待て！</strong></p>
-              <!-- 続編の場合に前回記事へのリンクを追加 -->
+            
         </article>
+        
         <div class="metadata">
             <p>テーマ: 斎藤知事 x 警部補ダイマジン</p>
             <p>文体: ヒーロー気取り風</p>
@@ -47,6 +52,7 @@
         </div>
     </main>
     <footer>
+        <div class="article-navigation"><a href="../../2025/03/2025-03-23-1742764350.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-23-1742771578.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
         <p>このニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
     </footer>

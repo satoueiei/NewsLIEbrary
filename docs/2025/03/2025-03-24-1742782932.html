@@ -11,6 +11,10 @@
         .metadata { font-size: 0.9em; color: #666; }
         h1 { color: #333; }
         .archive-link { margin-top: 10px; }
+        .article-navigation { margin: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+        .nav-arrow { padding: 8px 15px; text-decoration: none; color: #0066cc; font-weight: bold; }
+        .nav-arrow.disabled { color: #999; pointer-events: none; }
+        .nav-arrow:hover:not(.disabled) { text-decoration: underline; background-color: #f5f5f5; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -18,7 +22,7 @@
         <h1>大滑子帝国広報部</h1>
         <p>帝国ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
-        
+        <div class="article-navigation"><a href="../../2025/03/2025-03-24-1742778684.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-24-1742785198.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
     </header>
     <main>
         <article>
@@ -37,8 +41,9 @@
 <p>「アートは、世界を繋ぐ共通言語。そして、魂を解放する、魔法のような力を持っている。今回のプロジェクトを通じて、一人でも多くの人に、アートの素晴らしさを伝えたい。そして、共に、新たな表現の可能性を探求していきたい。」</p>
 <p>成宮寛貴とフィリップ・キャリー。二つの才能が織りなす、美しき共鳴。それは、アートの歴史に、新たな1ページを刻むことになるだろう。今後の展開から、目が離せない。</p>
 <hr />
-              <!-- 続編の場合に前回記事へのリンクを追加 -->
+            
         </article>
+        
         <div class="metadata">
             <p>テーマ: 成宮寛貴 x フィリップ・キャリー</p>
             <p>文体: アーティスト風</p>
@@ -46,6 +51,7 @@
         </div>
     </main>
     <footer>
+        <div class="article-navigation"><a href="../../2025/03/2025-03-24-1742778684.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-24-1742785198.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
         <p>このニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
     </footer>

@@ -11,6 +11,10 @@
         .metadata { font-size: 0.9em; color: #666; }
         h1 { color: #333; }
         .archive-link { margin-top: 10px; }
+        .article-navigation { margin: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+        .nav-arrow { padding: 8px 15px; text-decoration: none; color: #0066cc; font-weight: bold; }
+        .nav-arrow.disabled { color: #999; pointer-events: none; }
+        .nav-arrow:hover:not(.disabled) { text-decoration: underline; background-color: #f5f5f5; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -18,7 +22,7 @@
         <h1>大滑子帝国広報部</h1>
         <p>帝国ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
-        
+        <div class="article-navigation"><a href="../../2025/03/2025-03-24-1742782932.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-24-1742800759.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
     </header>
     <main>
         <article>
@@ -35,8 +39,9 @@
 <p>今回の「やらせ告白ドッキリ」は、比嘉愛未という女優の、底抜けの明るさと、周囲を巻き込むパワー、そして何よりもファンを大切にする気持ちを改めて証明する出来事となりました。</p>
 <p>今後の比嘉さんの活躍から、ますます目が離せません！ きっと、また私たちをあっと驚かせるような、楽しいサプライズを用意してくれているはずです！ 楽観主義者として、比嘉さんの今後の活躍に大いに期待しましょう！</p>
 <p>それにしても、比嘉さんの演技力は本当に素晴らしいですね！ 今回のドッキリで、女優としての才能を改めて見せつけられた気がします。もしかしたら、近いうちに、比嘉さんの「ドッキリ」をテーマにしたドラマや映画が制作される…なんてこともあるかもしれませんね！ 想像するだけでワクワクします！</p>
-              <!-- 続編の場合に前回記事へのリンクを追加 -->
+            
         </article>
+        
         <div class="metadata">
             <p>テーマ: 比嘉愛未 x やらせ</p>
             <p>文体: 楽観主義者風</p>
@@ -44,6 +49,7 @@
         </div>
     </main>
     <footer>
+        <div class="article-navigation"><a href="../../2025/03/2025-03-24-1742782932.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-24-1742800759.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
         <p>このニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
     </footer>
