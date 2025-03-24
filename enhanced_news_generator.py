@@ -178,28 +178,16 @@ def generate_html_from_markdown(md_content, metadata):
 
     # articles.jsonから全記事のリストを読み込む
     articles = load_articles_json()
-    # 日付を基準にソート（同一日付内ではタイムスタンプでさらにソート）
-    sorted_articles = sorted(articles, key=lambda x: (x["date"], x["timestamp"]))
+    # タイムスタンプを基準にソート
+    sorted_articles = sorted(articles, key=lambda x: x["timestamp"])
     current_url = f"{metadata['date'][:4]}/{metadata['date'][5:7]}/{metadata['date']}-{int(metadata['timestamp'])}.html"
     
     # 現在の記事のインデックスを見つける
     current_index = next((i for i, article in enumerate(sorted_articles) if article["url"] == current_url), -1)
     
-    # 前後の記事を特定（日付が異なるものに限定）
-    prev_article_url = None
-    next_article_url = None
-    
-    # 前の記事（現在の日付より古い最初の記事）
-    for i in range(current_index - 1, -1, -1):
-        if sorted_articles[i]["date"] < metadata["date"]:
-            prev_article_url = sorted_articles[i]["url"]
-            break
-    
-    # 次の記事（現在の日付より新しい最初の記事）
-    for i in range(current_index + 1, len(sorted_articles)):
-        if sorted_articles[i]["date"] > metadata["date"]:
-            next_article_url = sorted_articles[i]["url"]
-            break
+    # 前後の記事を特定（タイムスタンプ順）
+    prev_article_url = sorted_articles[current_index - 1]["url"] if current_index > 0 else None
+    next_article_url = sorted_articles[current_index + 1]["url"] if current_index < len(sorted_articles) - 1 else None
 
     # ナビゲーションHTMLを生成
     navigation_html = '<div class="article-navigation">'
