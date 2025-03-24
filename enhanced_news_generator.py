@@ -326,7 +326,7 @@ def generate_index_page(articles_metadata):
         const pageInput = document.getElementById('page-input');
         const goPageBtn = document.getElementById('go-page');
         
-        const itemsPerPage = 10;
+        const itemsPerPage = 100;
         let currentPage = 1;
         let articles = [];
         
