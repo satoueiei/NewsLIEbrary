@@ -9,7 +9,7 @@ import markdown
 import re
 
 # Geminiと接続
-GOOGLE_API_KEY = 'AIzaSyBj93AYpuJFPG5bjfzh-miAp36qp0z10Qo'
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
 
 def generate_news_article():
