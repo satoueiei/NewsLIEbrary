@@ -27,7 +27,7 @@ def find_sequel_candidate(articles, days_threshold=30):
         if "Y" in article.get("sequel","N"):
             article_date = datetime.strptime(article["date"], "%Y-%m-%d")
             days_elapsed = (now - article_date).days
-            if days_elapsed >= days_threshold:
+            if days_elapsed >= days_threshold and days_elapsed<days_threshold+30:
                 candidates.append(article)
     return choice(candidates) if candidates else None
 
