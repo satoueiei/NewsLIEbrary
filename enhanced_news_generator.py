@@ -81,7 +81,7 @@ def generate_news_article():
     content = response.text
 
     #続きそうか判定
-    question=f"以下のニュース記事の本文を読み、「続報を待て！」や「引き続き追っていく」などの続きを示唆するコメントが明示されてることによって、続きの記事が後日に出そうであるかを判断してください。出そうだと思った場合には”Y”、出ないと思った場合には”N”とだけ答えてください。　{content}"
+    question=f"以下のニュース記事の本文を読み、この記事に対して「続報を出す」といったような、続編執筆に対する明確な意思表示が記事内に存在するかどうかを判断してください。記事内に「続報を出す」といった明確な言葉による宣言が存在する場合には「Y」、存在しない場合には「N」とだけ答えてください。記事の内容から推測される今後の展開や、記者の意図に関する解釈は含めないでください。{content}"
     ansewer=model.generate_content(question)
     sequel=ansewer.text
     
@@ -123,7 +123,7 @@ def generate_sequel_article(prev_article):
     content = response.text
 
     # 続編かどうかの判定
-    question = f"以下のニュース記事の本文を読み、「続報を待て！」や「引き続き追っていく」などの続きを示唆するコメントが明示されてることによって、続きの記事が後日出そうであるかを判断してください。出そうだと思った場合には”Y”、出ないと思った場合には”N”とだけ答えてください。\n{content}"
+    question = f"以下のニュース記事の本文を読み、この記事に対して「続報を出す」といったような、続編執筆に対する明確な意思表示が記事内に存在するかどうかを判断してください。記事内に「続報を出す」といった明確な言葉による宣言が存在する場合には「Y」、存在しない場合には「N」とだけ答えてください。記事の内容から推測される今後の展開や、記者の意図に関する解釈は含めないでください。\n{content}"
     answer = model.generate_content(question)
     sequel = answer.text
 
@@ -178,6 +178,30 @@ def generate_html_from_markdown(md_content, metadata):
     # 続編の場合、前回記事へのリンクを追加（なくても動作するように）
     prev_link = f'<p><a href="../../{metadata["prev_url"]}">前回の記事を読む</a></p>' if "prev_url" in metadata else ""
 
+    # articles.jsonから全記事のリストを読み込む
+    articles = load_articles_json()
+    sorted_articles = sorted(articles, key=lambda x: x["timestamp"])  # タイムスタンプ順にソート
+    current_url = f"{metadata['date'][:4]}/{metadata['date'][5:7]}/{metadata['date']}-{int(metadata['timestamp'])}.html"
+    
+    # 現在の記事のインデックスを見つける
+    current_index = next((i for i, article in enumerate(sorted_articles) if article["url"] == current_url), -1)
+    
+    # 前後の記事のURLを取得
+    prev_article_url = sorted_articles[current_index - 1]["url"] if current_index > 0 else None
+    next_article_url = sorted_articles[current_index + 1]["url"] if current_index < len(sorted_articles) - 1 else None
+
+    # ナビゲーションHTMLを生成
+    navigation_html = '<div class="article-navigation">'
+    if prev_article_url:
+        navigation_html += f'<a href="../../{prev_article_url}" class="nav-arrow prev-arrow">◀ 前の記事</a>'
+    else:
+        navigation_html += '<span class="nav-arrow prev-arrow disabled">◀ 前の記事</span>'
+    if next_article_url:
+        navigation_html += f'<a href="../../{next_article_url}" class="nav-arrow next-arrow">次の記事 ▶</a>'
+    else:
+        navigation_html += '<span class="nav-arrow next-arrow disabled">次の記事 ▶</span>'
+    navigation_html += '</div>'
+
     html_template = f"""<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -191,6 +215,10 @@ def generate_html_from_markdown(md_content, metadata):
         .metadata {{ font-size: 0.9em; color: #666; }}
         h1 {{ color: #333; }}
         .archive-link {{ margin-top: 10px; }}
+        .article-navigation {{ margin: 20px 0; display: flex; justify-content: space-between; align-items: center; }}
+        .nav-arrow {{ padding: 8px 15px; text-decoration: none; color: #0066cc; font-weight: bold; }}
+        .nav-arrow.disabled {{ color: #999; pointer-events: none; }}
+        .nav-arrow:hover:not(.disabled) {{ text-decoration: underline; background-color: #f5f5f5; border-radius: 5px; }}
     </style>
 </head>
 <body>
@@ -198,13 +226,14 @@ def generate_html_from_markdown(md_content, metadata):
         <h1>大滑子帝国広報部</h1>
         <p>帝国ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
-        
+        {navigation_html}  <!-- 前後の記事へのナビゲーション -->
     </header>
     <main>
         <article>
             {html_content}
             {prev_link}  <!-- 続編の場合に前回記事へのリンクを追加 -->
         </article>
+        
         <div class="metadata">
             <p>テーマ: {metadata['theme']} x {metadata['wiki_title']}</p>
             <p>文体: {metadata['personality']}風</p>
@@ -212,6 +241,7 @@ def generate_html_from_markdown(md_content, metadata):
         </div>
     </main>
     <footer>
+        {navigation_html}  <!-- 前後の記事へのナビゲーション -->
         <p>このニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
     </footer>
