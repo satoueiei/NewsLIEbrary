@@ -81,7 +81,7 @@ def generate_news_article():
     content = response.text
 
     #続きそうか判定
-    question=f"以下のニュース記事を読み、続きの記事が後日出そうであるかを判断してください。出そうだと思った場合には”Y”、出ないと思った場合には”N”とだけ答えてください。　{content}"
+    question=f"以下のニュース記事の本文を読み、「続報を待て！」や「引き続き追っていく」などの続きを示唆するコメントが明示されてることによって、続きの記事が後日に出そうであるかを判断してください。出そうだと思った場合には”Y”、出ないと思った場合には”N”とだけ答えてください。　{content}"
     ansewer=model.generate_content(question)
     sequel=ansewer.text
     
@@ -123,7 +123,7 @@ def generate_sequel_article(prev_article):
     content = response.text
 
     # 続編かどうかの判定
-    question = f"以下のニュース記事の文章を読み、続きの記事が後日出そうであるかを判断してください。出そうだと思った場合には”Y”、出ないと思った場合には”N”とだけ答えてください。\n{content}"
+    question = f"以下のニュース記事の本文を読み、「続報を待て！」や「引き続き追っていく」などの続きを示唆するコメントが明示されてることによって、続きの記事が後日出そうであるかを判断してください。出そうだと思った場合には”Y”、出ないと思った場合には”N”とだけ答えてください。\n{content}"
     answer = model.generate_content(question)
     sequel = answer.text
 
