@@ -11,6 +11,10 @@
         .metadata { font-size: 0.9em; color: #666; }
         h1 { color: #333; }
         .archive-link { margin-top: 10px; }
+        .article-navigation { margin: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+        .nav-arrow { padding: 8px 15px; text-decoration: none; color: #0066cc; font-weight: bold; }
+        .nav-arrow.disabled { color: #999; pointer-events: none; }
+        .nav-arrow:hover:not(.disabled) { text-decoration: underline; background-color: #f5f5f5; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -18,7 +22,7 @@
         <h1>大滑子帝国広報部</h1>
         <p>帝国ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
-        
+        <div class="article-navigation"><a href="../../2025/03/2025-03-23-1742757122.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-23-1742764350.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
     </header>
     <main>
         <article>
@@ -51,8 +55,9 @@
 <p><strong>今後の二人から、目が離せません！</strong> News LIE-braryでは、続報が入り次第、光の速さでお伝えします！</p>
 <p>（追伸）</p>
 <p>…ところで、傷彦さん、レコーディング中に、聖子ちゃんに「ロード」の弾き語りを13章まで披露したらしいんですが…聖子ちゃん、途中で寝ちゃったらしいですよ。…どんまい、傷彦さん！</p>
-              <!-- 続編の場合に前回記事へのリンクを追加 -->
+            
         </article>
+        
         <div class="metadata">
             <p>テーマ: 松田聖子 x 傷彦</p>
             <p>文体: お笑い芸人風</p>
@@ -60,6 +65,7 @@
         </div>
     </main>
     <footer>
+        <div class="article-navigation"><a href="../../2025/03/2025-03-23-1742757122.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-23-1742764350.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
         <p>このニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
     </footer>

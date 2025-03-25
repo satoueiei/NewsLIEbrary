@@ -11,6 +11,10 @@
         .metadata { font-size: 0.9em; color: #666; }
         h1 { color: #333; }
         .archive-link { margin-top: 10px; }
+        .article-navigation { margin: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+        .nav-arrow { padding: 8px 15px; text-decoration: none; color: #0066cc; font-weight: bold; }
+        .nav-arrow.disabled { color: #999; pointer-events: none; }
+        .nav-arrow:hover:not(.disabled) { text-decoration: underline; background-color: #f5f5f5; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -18,7 +22,7 @@
         <h1>大滑子帝国広報部</h1>
         <p>帝国ニュースサイト「News LIE-brary」が、大滑子帝国の日常をお届けします。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
-        
+        <div class="article-navigation"><a href="../../2025/03/2025-03-24-1742804414.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-24-1742811378.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
     </header>
     <main>
         <article>
@@ -44,8 +48,9 @@
 <p>「ジョルノクレアとの別れは寂しいけれど、これは終わりじゃない。新たな出会いの始まりでもあるんだ。これからも、僕は俳優として、そして一人の人間として、前を向いて歩いていくよ」</p>
 <p>吉田の言葉に、会場からは大きな拍手が沸き起こった。その拍手は、ジョルノクレアとの別れを惜しむと同時に、吉田の新たな門出を祝福する、温かいエールだった。</p>
 <p>吉田鋼太郎とジョルノクレア。二人の間に紡がれた、ドラマよりもドラマチックな物語は、人々の心に深く刻まれた。そして、ジョルノクレアは、新たなオーナーの元で、第二の人生を歩み始める。その小さな車体には、吉田鋼太郎との熱い思い出が、しっかりと刻まれていることだろう。</p>
-              <!-- 続編の場合に前回記事へのリンクを追加 -->
+            
         </article>
+        
         <div class="metadata">
             <p>テーマ: 吉田鋼太郎 x ホンダ・ジョルノクレア</p>
             <p>文体: ドラマチック風</p>
@@ -53,6 +58,7 @@
         </div>
     </main>
     <footer>
+        <div class="article-navigation"><a href="../../2025/03/2025-03-24-1742804414.html" class="nav-arrow prev-arrow">◀ 前の記事</a><a href="../../2025/03/2025-03-24-1742811378.html" class="nav-arrow next-arrow">次の記事 ▶</a></div>  <!-- ナビゲーションを本文とメタデータの間に配置 -->
         <p>このニュースは自動生成されたフィクションです。実在の人物・団体とは関係ありません。</p>
         <p class="archive-link"><a href="../../index.html">アーカイブに戻る</a></p>
     </footer>
