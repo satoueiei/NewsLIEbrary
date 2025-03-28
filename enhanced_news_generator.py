@@ -557,10 +557,12 @@ def get_tweet_content(json_file="./docs/articles.json"):
 def login_func(driver, username, password):
     driver.get("https://x.com/login")
     time.sleep(20)
+    print(username)
     driver.find_element(By.XPATH, '//input[@name="text"]').send_keys(username)
     driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
     time.sleep(20)
-    
+
+    print(password)    
     driver.find_element(By.XPATH, '//input[@name="password"]').send_keys(password)
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
     time.sleep(20)
