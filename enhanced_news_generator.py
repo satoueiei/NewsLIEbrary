@@ -575,11 +575,12 @@ def login_func(driver, username, password):
         print("異常画面が検出されました。メールアドレスを入力します")
         verification_field.send_keys("empireofnameko@gmail.com")
         driver.save_screenshot("step4_after_verification_input.png")
-        driver.find_element(By.XPATH, "//button[text()='Next']").click()
+        driver.find_element(By.XPATH, "//*[text()='Next']").click()
         time.sleep(20)
         driver.save_screenshot("step5_after_verification_next.png")
-    except:
-        print("異常画面は出ませんでした（直接パスワード画面へ進んだと仮定）")
+    except　Exception as e:
+        print(f"異常画面は出ませんでした（直接パスワード画面へ進んだと仮定）:{e}")
+        time.sleep(20)
     password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
     password_field.send_keys("FdcK8AQ0")
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
