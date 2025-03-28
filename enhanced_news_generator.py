@@ -583,6 +583,7 @@ def setup_selenium_driver():
     chrome_options = Options()
     
     # GitHub Actions環境向けの追加オプション
+    chrome_options.add_argument('--lang=ja')  # 日本語を指定
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
@@ -590,7 +591,7 @@ def setup_selenium_driver():
     
     # ChromeDriverManagerは不要になる
     driver = webdriver.Chrome(options=chrome_options)
-    
+    print(driver.title)  # 日本語のタイトルが表示されるはず
     return driver
 
 def main():
