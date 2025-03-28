@@ -556,7 +556,7 @@ def get_tweet_content(json_file="./docs/articles.json"):
     
     return f"{title}\n https://satoueiei.github.io/NewsLIEbrary/{url}"
 
-def login_func(driver, username, password):
+def login_func(driver, username, password, mail, phone):
     driver.get("https://x.com/login")
     time.sleep(20)
     
@@ -580,19 +580,6 @@ def login_func(driver, username, password):
     except Exception as e:
         print(f"異常画面は出ませんでした（直接パスワード画面へ進んだと仮定）:{e}")
         time.sleep(20)
-    
-    try:
-        # 異常画面2_1の入力欄を仮定（name="text"が再利用されるケース）
-        phone_field = driver.find_element(By.XPATH, '//input[@name="text"]')
-        print("異常画面2_1が検出されました。電話番号を入力します")
-        driver.save_screenshot("3.png")
-        phone_field.send_keys(phone)
-        driver.find_element(By.XPATH, "//*[text()='Next']").click()
-        time.sleep(20)
-        driver.save_screenshot("4.png")
-    except Exception as e:
-        print(f"異常画面2_1は出ませんでした（ログインしたと仮定）:{e}")
-        time.sleep(20)    
         
     password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
     password_field.send_keys(password)
@@ -664,7 +651,7 @@ def main():
     driver = setup_selenium_driver()
     
     try:
-        login_func(driver, username, password)
+        login_func(driver, username, password, mail, phone)
         tweet_text = get_tweet_content()
         send_post(driver, tweet_text)
         posts = get_post(driver, "namekorori2")
