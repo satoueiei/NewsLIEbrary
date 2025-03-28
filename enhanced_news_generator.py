@@ -567,8 +567,14 @@ def login_func(driver, username, password):
     driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
     time.sleep(20)
 
-    print(password)    
-    driver.find_element(By.XPATH, '//input[@name="password"]').send_keys("FdcK8AQ0")
+    # パスワード入力
+    try:
+        password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
+        password_field.send_keys("FdcK8AQ0")
+        driver.save_screenshot("step3_after_password.png")
+    except Exception as e:
+        print("パスワード入力欄が見つかりませんでした")
+        raise
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
     time.sleep(20)
 
