@@ -601,10 +601,13 @@ def main():
     print(f"記事を保存しました: {content_path}")
 
     # Seleniumのセットアップ
+
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--headless=new")  # 新しい headless モード
+    chrome_options.add_argument("--no-sandbox")  # 必須
+    chrome_options.add_argument("--disable-dev-shm-usage")  # メモリ不足回避
+    chrome_options.add_argument("--disable-gpu")  # GPU不要
+    
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome()
     login_func(driver, username, password)
