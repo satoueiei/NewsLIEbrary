@@ -559,6 +559,7 @@ def login_func(driver, username, password):
     time.sleep(20)
     print(username)
     driver.find_element(By.XPATH, '//input[@name="text"]').send_keys("namekorori2")
+    time.sleep(20)
     driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
     time.sleep(20)
 
