@@ -31,17 +31,10 @@ jobs:
         GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
+        MAIL: ${{ secrets.MAIL }}
+        PHONE: ${{ secrets.PHONE }}
       run: |
         python enhanced_news_generator.py
-    - name: Upload debug files
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: debug-files
-        path: |
-          step*.png
-          error_screenshot.png
-          page_source.html
     - name: Commit and push changes
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
