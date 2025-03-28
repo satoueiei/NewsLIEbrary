@@ -558,19 +558,18 @@ def login_func(driver, username, password):
     driver.get("https://x.com/login")
     time.sleep(20)
     print(username)
-    driver.find_element(By.XPATH, '//input[@name="text"]').send_keys("namekorori2")
-    username_field = driver.find_element(By.XPATH, '//input[@name="text"]')
-    entered_value = username_field.get_attribute("value")
-    print(f"入力後の値: {entered_value}")
-    if entered_value != "namekorori2":  # 固定値で比較
-        raise ValueError("ユーザー名が正しく入力されませんでした")
+    # 「Next」ボタン
     driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
     time.sleep(20)
-
+    print("「Next」クリック後のURL:", driver.current_url)
+    driver.save_screenshot("step2_after_next.png")
+    
+    print(f"指定されたパスワード: {password}")
     # パスワード入力
     try:
         password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
         password_field.send_keys("FdcK8AQ0")
+        driver.save_screenshot("step3_after_password.png")
     except Exception as e:
         print("パスワード入力欄が見つかりませんでした")
         raise
