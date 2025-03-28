@@ -560,7 +560,7 @@ def login_func(driver, username, password):
     time.sleep(20)
     driver.save_screenshot("step1_after_browsing.png")
     print(username)
-    driver.find_element(By.XPATH, '//input[@name="text"]').send_keys(username)
+    driver.find_element(By.XPATH, '//input[@name="text"]').send_keys("empireofnameko@gmail.com")
     driver.save_screenshot("step2_after_username.png")
     # 「Next」ボタン
     driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
