@@ -559,7 +559,11 @@ def login_func(driver, username, password):
     time.sleep(20)
     print(username)
     driver.find_element(By.XPATH, '//input[@name="text"]').send_keys("namekorori2")
-    time.sleep(20)
+    username_field = driver.find_element(By.XPATH, '//input[@name="text"]')
+    entered_value = username_field.get_attribute("value")
+    print(f"入力後の値: {entered_value}")
+    if entered_value != "namekorori2":  # 固定値で比較
+        raise ValueError("ユーザー名が正しく入力されませんでした")
     driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
     time.sleep(20)
 
