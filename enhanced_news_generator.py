@@ -659,7 +659,7 @@ def main():
 
  
     driver = setup_selenium_driver()
-    
+    update_website()
     try:
         login_func(driver, username, password, mail, phone)
         tweet_text = get_tweet_content()
@@ -669,7 +669,7 @@ def main():
     finally:
         driver.quit()
 
-    update_website()
+    
     print("ウェブサイトを更新しました")
 
 if __name__ == "__main__":
