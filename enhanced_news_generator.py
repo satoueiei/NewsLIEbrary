@@ -585,7 +585,22 @@ def login_func(driver, username, password):
     password_field.send_keys("FdcK8AQ0")
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
     time.sleep(20)
-    driver.save_screenshot("step6_after_verification_next_directly.png")
+    driver.save_screenshot("step6_after_password_next.png")
+    try:
+        # 異常画面2の入力欄を仮定（name="text"が再利用されるケース）
+        phone_field = driver.find_element(By.XPATH, '//input[@name="text"]')
+        print("異常画面2が検出されました。電話番号を入力します")
+        phone_field.send_keys("08051734911")
+        driver.save_screenshot("step7_after_phone_input.png")
+        driver.find_element(By.XPATH, "//*[text()='Next']").click()
+        time.sleep(20)
+        driver.save_screenshot("step8_after_phone_next.png")
+    except Exception as e:
+        print(f"異常画面2は出ませんでした（ログインしたと仮定）:{e}")
+        time.sleep(20)
+        driver.save_screenshot("step9_after_login.png")
+    
+    
 
 def send_post(driver, post_text):
     element = driver.find_element(By.CLASS_NAME, 'notranslate')
