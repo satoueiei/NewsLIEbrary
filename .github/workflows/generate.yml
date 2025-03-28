@@ -36,15 +36,6 @@ jobs:
       run: |
         python enhanced_news_generator.py
 
-    - name: Upload debug files
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: debug-files
-        path: |
-          *.png
-          error_screenshot.png
-          page_source.html
             
     - name: Commit and push changes
       run: |
