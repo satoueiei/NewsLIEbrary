@@ -599,29 +599,23 @@ def login_func(driver, username, password, mail, phone):
         time.sleep(20)    
 
 
+def filter_bmp(text):
+    #BMP外の文字（U+10000以降）を除去または置換
+    return ''.join(c for c in text if ord(c) <= 0xFFFF)
+
 def send_post(driver, post_text):
-    try:
-        #1. 投稿入力欄を特定し、クリック
-        input_element = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CLASS_NAME, 'notranslate'))
-        )
-        input_element.click()
+    #1. 投稿入力欄をクラス名 'notranslate' で特定し、クリック
+    element = driver.find_element(By.CLASS_NAME, 'notranslate')
+    element.click()
+    
+    #2. post_text を入力欄に送信
+    filterd_text=filter_bmp(post_text)
+    element.send_keys(filterd_text)
+    time.sleep(2)  # 20秒待機（入力後の処理を待つため？）
 
-        #2. JavaScriptで直接テキストを設定（絵文字対応）
-        driver.execute_script("arguments[0].value = arguments[1];", input_element, post_text)
-
-        #3. 投稿ボタンが有効になるのを待機し、クリック
-        tweet_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '//*[@data-testid="tweetButtonInline"]'))
-        )
-        driver.execute_script("arguments[0].click();", tweet_button)
-
-        #4. 投稿処理の完了を少し待機
-        time.sleep(2)
-
-    except Exception as e:
-        print(f"投稿中にエラーが発生しました: {e}")
-        raise
+    #3. 投稿ボタンをXPathで特定し、JavaScriptでクリック
+    element = driver.find_element(By.XPATH, '//*[@data-testid="tweetButtonInline"]')
+    driver.execute_script("arguments[0].click();", element)
 
 def get_post(driver, account):
     driver.get(f"https://x.com/{account}")
