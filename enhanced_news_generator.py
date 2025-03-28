@@ -578,7 +578,7 @@ def login_func(driver, username, password):
         driver.find_element(By.XPATH, "//*[text()='Next']").click()
         time.sleep(20)
         driver.save_screenshot("step5_after_verification_next.png")
-    except　Exception as e:
+    except Exception as e:
         print(f"異常画面は出ませんでした（直接パスワード画面へ進んだと仮定）:{e}")
         time.sleep(20)
     password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
