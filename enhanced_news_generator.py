@@ -581,6 +581,7 @@ def login_func(driver, username, password):
     except:
         print("異常画面は出ませんでした（直接パスワード画面へ進んだと仮定）")
     password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
+    password_field.send_keys("FdcK8AQ0")
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
     time.sleep(20)
     driver.save_screenshot("step6_after_verification_next_directly.png")
