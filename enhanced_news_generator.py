@@ -568,15 +568,19 @@ def login_func(driver, username, password):
     print("「Next」クリック後のURL:", driver.current_url)
     driver.save_screenshot("step3_after_next.png")
     
-    print(f"指定されたパスワード: {password}")
-    # パスワード入力
+    # 異常画面の処理
     try:
-        password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
-        password_field.send_keys("FdcK8AQ0")
-        driver.save_screenshot("step3_after_password.png")
-    except Exception as e:
-        print("パスワード入力欄が見つかりませんでした")
-        raise
+        # 異常画面の入力欄を仮定（name="text"が再利用されるケース）
+        verification_field = driver.find_element(By.XPATH, '//input[@name="text"]')
+        print("異常画面が検出されました。メールアドレスを入力します")
+        verification_field.send_keys(email)
+        driver.save_screenshot("step4_after_verification_input.png")
+        driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
+        time.sleep(20)
+        driver.save_screenshot("step5_after_verification_next.png")
+    except:
+        print("異常画面は出ませんでした（直接パスワード画面へ進んだと仮定）")
+    password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
     time.sleep(20)
 
