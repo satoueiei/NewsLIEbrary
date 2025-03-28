@@ -579,6 +579,20 @@ def get_post(driver, account):
     posts = [element.text for element in driver.find_elements(By.CLASS_NAME, 'css-1jxf684')]
     return posts
 
+def setup_selenium_driver():
+    chrome_options = Options()
+    
+    # GitHub Actions環境向けの追加オプション
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-gpu")
+    
+    # ChromeDriverManagerは不要になる
+    driver = webdriver.Chrome(options=chrome_options)
+    
+    return driver
+
 def main():
     # 既存の記事を読み込む
     articles = load_articles_json()
@@ -600,22 +614,17 @@ def main():
     content_path, metadata_path = save_article(content, metadata)
     print(f"記事を保存しました: {content_path}")
 
-    # Seleniumのセットアップ
-    chrome_options = Options()
-    chrome_options.add_argument("--headless=new")  # 最新の headless モード
-    chrome_options.add_argument("--no-sandbox")  # GitHub Actions 用
-    chrome_options.add_argument("--disable-dev-shm-usage")  # メモリ不足回避
-    chrome_options.add_argument("--disable-gpu")  # GPU不要
-    chrome_options.add_argument(f"--user-data-dir={os.getenv('HOME')}/chrome-data")  # ✅ 一意のユーザーデータディレクトリを指定
-
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome()
-    login_func(driver, username, password)
-    tweet_text=get_tweet_content
-    send_post(driver, tweet_text)
-    posts = get_post(driver, "namekorori2")
-    print(posts)
-    driver.quit()
+ 
+    driver = setup_selenium_driver()
+    
+    try:
+        login_func(driver, username, password)
+        tweet_text = get_tweet_content()
+        send_post(driver, tweet_text)
+        posts = get_post(driver, "namekorori2")
+        print(posts)
+    finally:
+        driver.quit()
 
     update_website()
     print("ウェブサイトを更新しました")
