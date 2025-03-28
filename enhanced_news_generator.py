@@ -14,6 +14,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 # Geminiと接続
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
@@ -596,14 +598,30 @@ def login_func(driver, username, password, mail, phone):
         print(f"異常画面2は出ませんでした（ログインしたと仮定）:{e}")
         time.sleep(20)    
 
-def send_post(driver, post_text):
-    element = driver.find_element(By.CLASS_NAME, 'notranslate')
-    element.click()
-    element.send_keys(post_text)
-    time.sleep(20)
 
-    element = driver.find_element(By.XPATH, '//*[@data-testid="tweetButtonInline"]')
-    driver.execute_script("arguments[0].click();", element)
+def send_post(driver, post_text):
+    try:
+        #1. 投稿入力欄を特定し、クリック
+        input_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CLASS_NAME, 'notranslate'))
+        )
+        input_element.click()
+
+        #2. JavaScriptで直接テキストを設定（絵文字対応）
+        driver.execute_script("arguments[0].value = arguments[1];", input_element, post_text)
+
+        #3. 投稿ボタンが有効になるのを待機し、クリック
+        tweet_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//*[@data-testid="tweetButtonInline"]'))
+        )
+        driver.execute_script("arguments[0].click();", tweet_button)
+
+        #4. 投稿処理の完了を少し待機
+        time.sleep(2)
+
+    except Exception as e:
+        print(f"投稿中にエラーが発生しました: {e}")
+        raise
 
 def get_post(driver, account):
     driver.get(f"https://x.com/{account}")
