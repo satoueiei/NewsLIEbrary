@@ -558,15 +558,15 @@ def login_func(driver, username, password):
     driver.get("https://x.com/login")
     
     time.sleep(20)
-    driver.save_screenshot("1.png")
+    driver.save_screenshot("step1_after_browsing.png")
     print(username)
     driver.find_element(By.XPATH, '//input[@name="text"]').send_keys(username)
-    driver.save_screenshot("2.png")
+    driver.save_screenshot("step2_after_username.png")
     # 「Next」ボタン
     driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
     time.sleep(20)
     print("「Next」クリック後のURL:", driver.current_url)
-    driver.save_screenshot("3.png")
+    driver.save_screenshot("step3_after_next.png")
     
     print(f"指定されたパスワード: {password}")
     # パスワード入力
