@@ -583,6 +583,7 @@ def login_func(driver, username, password):
     password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
     time.sleep(20)
+    driver.save_screenshot("step6_after_verification_next_directly.png")
 
 def send_post(driver, post_text):
     element = driver.find_element(By.CLASS_NAME, 'notranslate')
