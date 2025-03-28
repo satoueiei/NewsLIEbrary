@@ -39,7 +39,7 @@ jobs:
       with:
         name: debug-files
         path: |
-          step*.png
+          *.png
           error_screenshot.png
           page_source.html
     - name: Commit and push changes
