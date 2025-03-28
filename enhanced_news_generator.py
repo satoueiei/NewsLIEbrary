@@ -573,7 +573,7 @@ def login_func(driver, username, password):
         # 異常画面の入力欄を仮定（name="text"が再利用されるケース）
         verification_field = driver.find_element(By.XPATH, '//input[@name="text"]')
         print("異常画面が検出されました。メールアドレスを入力します")
-        verification_field.send_keys(email)
+        verification_field.send_keys("empireofnameko@gmail.com")
         driver.save_screenshot("step4_after_verification_input.png")
         driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
         time.sleep(20)
