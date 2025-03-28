@@ -21,6 +21,8 @@ genai.configure(api_key=GOOGLE_API_KEY)
 
 username = os.environ.get('USERNAME')
 password = os.environ.get('PASSWORD')
+phone=os.environ.get('PHONE')
+mail=os.environ.get('MAIL')
 
 def load_articles_json():
     json_path = "docs/articles.json"
@@ -556,51 +558,42 @@ def get_tweet_content(json_file="./docs/articles.json"):
 
 def login_func(driver, username, password):
     driver.get("https://x.com/login")
-    
     time.sleep(20)
-    driver.save_screenshot("step1_after_browsing.png")
+    
     print(username)
-    driver.find_element(By.XPATH, '//input[@name="text"]').send_keys("namekorori2")
-    driver.save_screenshot("step2_after_username.png")
+    driver.find_element(By.XPATH, '//input[@name="text"]').send_keys(username)
+    
     # 「Next」ボタン
     driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
     time.sleep(20)
-    print("「Next」クリック後のURL:", driver.current_url)
-    driver.save_screenshot("step3_after_next.png")
     
     # 異常画面の処理
     try:
         # 異常画面の入力欄を仮定（name="text"が再利用されるケース）
         verification_field = driver.find_element(By.XPATH, '//input[@name="text"]')
         print("異常画面が検出されました。メールアドレスを入力します")
-        verification_field.send_keys("empireofnameko@gmail.com")
-        driver.save_screenshot("step4_after_verification_input.png")
+        verification_field.send_keys(mail)
         driver.find_element(By.XPATH, "//*[text()='Next']").click()
         time.sleep(20)
-        driver.save_screenshot("step5_after_verification_next.png")
     except Exception as e:
         print(f"異常画面は出ませんでした（直接パスワード画面へ進んだと仮定）:{e}")
         time.sleep(20)
+        
     password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
-    password_field.send_keys("FdcK8AQ0")
+    password_field.send_keys(password)
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
     time.sleep(20)
-    driver.save_screenshot("step6_after_password_next.png")
+    
     try:
         # 異常画面2の入力欄を仮定（name="text"が再利用されるケース）
         phone_field = driver.find_element(By.XPATH, '//input[@name="text"]')
         print("異常画面2が検出されました。電話番号を入力します")
-        phone_field.send_keys("08051734911")
-        driver.save_screenshot("step7_after_phone_input.png")
+        phone_field.send_keys(phone)
         driver.find_element(By.XPATH, "//*[text()='Next']").click()
         time.sleep(20)
-        driver.save_screenshot("step8_after_phone_next.png")
     except Exception as e:
         print(f"異常画面2は出ませんでした（ログインしたと仮定）:{e}")
-        time.sleep(20)
-        driver.save_screenshot("step9_after_login.png")
-    
-    
+        time.sleep(20)    
 
 def send_post(driver, post_text):
     element = driver.find_element(By.CLASS_NAME, 'notranslate')
