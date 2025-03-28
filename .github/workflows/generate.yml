@@ -29,6 +29,8 @@ jobs:
     - name: Run news generation script
       env:
         GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
       run: |
         python enhanced_news_generator.py
 
