@@ -2,3 +2,4 @@ feedparser
 google-generativeai
 requests
 markdown
+selenium
