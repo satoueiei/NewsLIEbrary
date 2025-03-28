@@ -36,3 +36,5 @@ jobs:
         git add content/ docs/
         git commit -m "Update news articles - $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
         git push
+    - name: ChromeとChromeDriverをセットアップ
+      uses: browser-actions/setup-chrome@latest

@@ -8,10 +8,19 @@ from datetime import datetime, timedelta
 import markdown
 import re
 from random import choice
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 # Geminiと接続
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
+
+username = os.environ.get('USERNAME')
+password = os.environ.get('PASSWORD')
 
 def load_articles_json():
     json_path = "docs/articles.json"
@@ -533,6 +542,43 @@ def update_website():
     with open(os.path.join(public_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_html)
 
+# JSONファイルから一番上のツイート内容を取得
+def get_tweet_content(json_file="tweets.json"):
+    with open(json_file, "r", encoding="utf-8") as file:
+        data = json.load(file)
+
+    # 一番上の記事を取得
+    tweet_data = data[0]
+    title = tweet_data["title"]
+    url = tweet_data["url"]
+    
+    return f"{title}\n https://satoueiei.github.io/NewsLIEbrary/{url}"
+
+def login_func(driver, username, password):
+    driver.get("https://x.com/login")
+    time.sleep(5)
+    driver.find_element(By.XPATH, '//input[@name="text"]').send_keys(username)
+    driver.find_element(By.XPATH, '//div/span/span[text()="次へ"]').click()
+    time.sleep(5)
+    
+    driver.find_element(By.XPATH, '//input[@name="password"]').send_keys(password)
+    driver.find_element(By.XPATH, '//div/span/span[text()="ログイン"]').click()
+    time.sleep(5)
+
+def send_post(driver, post_text):
+    element = driver.find_element(By.CLASS_NAME, 'notranslate')
+    element.click()
+    element.send_keys(post_text)
+    time.sleep(5)
+
+    element = driver.find_element(By.XPATH, '//*[@data-testid="tweetButtonInline"]')
+    driver.execute_script("arguments[0].click();", element)
+
+def get_post(driver, account):
+    driver.get(f"https://x.com/{account}")
+    posts = [element.text for element in driver.find_elements(By.CLASS_NAME, 'css-1jxf684')]
+    return posts
+
 def main():
     # 既存の記事を読み込む
     articles = load_articles_json()
@@ -553,7 +599,21 @@ def main():
 
     content_path, metadata_path = save_article(content, metadata)
     print(f"記事を保存しました: {content_path}")
-    
+
+    # Seleniumのセットアップ
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome()
+    login_func(driver, username, password)
+    tweet_text=get_tweet_content
+    send_post(driver, tweet_text)
+    posts = get_post(driver, "namekorori2")
+    print(posts)
+    driver.quit()
+
     update_website()
     print("ウェブサイトを更新しました")
 
