@@ -543,7 +543,7 @@ def update_website():
         f.write(index_html)
 
 # JSONファイルから一番上のツイート内容を取得
-def get_tweet_content(json_file="tweets.json"):
+def get_tweet_content(json_file="./docs/articles.json"):
     with open(json_file, "r", encoding="utf-8") as file:
         data = json.load(file)
 
@@ -556,20 +556,20 @@ def get_tweet_content(json_file="tweets.json"):
 
 def login_func(driver, username, password):
     driver.get("https://x.com/login")
-    time.sleep(5)
+    time.sleep(20)
     driver.find_element(By.XPATH, '//input[@name="text"]').send_keys(username)
-    driver.find_element(By.XPATH, '//div/span/span[text()="次へ"]').click()
-    time.sleep(5)
+    driver.find_element(By.XPATH, '//div/span/span[text()="next"]').click()
+    time.sleep(20)
     
     driver.find_element(By.XPATH, '//input[@name="password"]').send_keys(password)
-    driver.find_element(By.XPATH, '//div/span/span[text()="ログイン"]').click()
-    time.sleep(5)
+    driver.find_element(By.XPATH, '//div/span/span[text()="login"]').click()
+    time.sleep(20)
 
 def send_post(driver, post_text):
     element = driver.find_element(By.CLASS_NAME, 'notranslate')
     element.click()
     element.send_keys(post_text)
-    time.sleep(5)
+    time.sleep(20)
 
     element = driver.find_element(By.XPATH, '//*[@data-testid="tweetButtonInline"]')
     driver.execute_script("arguments[0].click();", element)
@@ -583,7 +583,6 @@ def setup_selenium_driver():
     chrome_options = Options()
     
     # GitHub Actions環境向けの追加オプション
-    chrome_options.add_argument('--lang=ja')  # 日本語を指定
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
