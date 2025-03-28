@@ -578,9 +578,21 @@ def login_func(driver, username, password):
     except Exception as e:
         print(f"異常画面は出ませんでした（直接パスワード画面へ進んだと仮定）:{e}")
         time.sleep(20)
+    
+    try:
+        # 異常画面2の入力欄を仮定（name="text"が再利用されるケース）
+        phone_field = driver.find_element(By.XPATH, '//input[@name="text"]')
+        print("異常画面2が検出されました。電話番号を入力します")
+        phone_field.send_keys(phone)
+        driver.find_element(By.XPATH, "//*[text()='Next']").click()
+        time.sleep(20)
+    except Exception as e:
+        print(f"異常画面2は出ませんでした（ログインしたと仮定）:{e}")
+        time.sleep(20)    
         
     password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
     password_field.send_keys(password)
+    
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
     time.sleep(20)
     
