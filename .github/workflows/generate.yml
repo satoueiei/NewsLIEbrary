@@ -23,6 +23,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: ChromeとChromeDriverをセットアップ
+      uses: browser-actions/setup-chrome@latest
+
     - name: Run news generation script
       env:
         GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
@@ -36,5 +39,3 @@ jobs:
         git add content/ docs/
         git commit -m "Update news articles - $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
         git push
-    - name: ChromeとChromeDriverをセットアップ
-      uses: browser-actions/setup-chrome@latest

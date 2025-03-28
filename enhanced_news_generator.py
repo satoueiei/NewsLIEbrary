@@ -601,13 +601,13 @@ def main():
     print(f"記事を保存しました: {content_path}")
 
     # Seleniumのセットアップ
-
     chrome_options = Options()
-    chrome_options.add_argument("--headless=new")  # 新しい headless モード
-    chrome_options.add_argument("--no-sandbox")  # 必須
+    chrome_options.add_argument("--headless=new")  # 最新の headless モード
+    chrome_options.add_argument("--no-sandbox")  # GitHub Actions 用
     chrome_options.add_argument("--disable-dev-shm-usage")  # メモリ不足回避
     chrome_options.add_argument("--disable-gpu")  # GPU不要
-    
+    chrome_options.add_argument(f"--user-data-dir={os.getenv('HOME')}/chrome-data")  # ✅ 一意のユーザーデータディレクトリを指定
+
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome()
     login_func(driver, username, password)
