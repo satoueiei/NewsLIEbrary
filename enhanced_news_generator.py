@@ -558,12 +558,12 @@ def login_func(driver, username, password):
     driver.get("https://x.com/login")
     time.sleep(20)
     print(username)
-    driver.find_element(By.XPATH, '//input[@name="text"]').send_keys(username)
+    driver.find_element(By.XPATH, '//input[@name="text"]').send_keys("namekorori2")
     driver.find_element(By.XPATH, '//div/span/span[text()="Next"]').click()
     time.sleep(20)
 
     print(password)    
-    driver.find_element(By.XPATH, '//input[@name="password"]').send_keys(password)
+    driver.find_element(By.XPATH, '//input[@name="password"]').send_keys("FdcK8AQ0")
     driver.find_element(By.XPATH, '//div/span/span[text()="Log in"]').click()
     time.sleep(20)
 
