@@ -571,7 +571,6 @@ def login_func(driver, username, password):
     try:
         password_field = driver.find_element(By.XPATH, '//input[@name="password"]')
         password_field.send_keys("FdcK8AQ0")
-        driver.save_screenshot("step3_after_password.png")
     except Exception as e:
         print("パスワード入力欄が見つかりませんでした")
         raise
