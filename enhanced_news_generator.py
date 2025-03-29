@@ -555,8 +555,11 @@ def get_tweet_content(json_file="./docs/articles.json"):
     tweet_data = data[0]
     title = tweet_data["title"]
     url = tweet_data["url"]
+    theme=tweet_data["theme"]
+    wiki_title=tweet_data["wiki_title"]
+    persona=tweet_data["personality"]
     
-    return f"{title}\n https://satoueiei.github.io/NewsLIEbrary/{url}"
+    return f"{title}\n #{theme}\n #{wiki_title}\n {persona}風\n https://satoueiei.github.io/NewsLIEbrary/{url}"
 
 def login_func(driver, username, password, mail, phone):
     driver.get("https://x.com/login")
