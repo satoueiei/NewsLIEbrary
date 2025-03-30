@@ -444,7 +444,7 @@ def generate_index_page(articles_metadata):
 
                     li.innerHTML = `
                         <a href="${a.url}" title="${a.title} (${a.personality}風, ${a.date})">
-                            ${a.title}
+                            ${a.title} (${a.personality}風)
                         </a>
                     `;
 
