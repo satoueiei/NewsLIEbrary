@@ -348,6 +348,8 @@ def generate_index_page(articles_metadata):
         <div class="filter-container">
             <input type="text" id="search-bar" placeholder="検索...">
             <select id="date-filter"><option value="">全日付</option></select>
+            <select id="persona-filter"><option value="">全文体</option></select>
+            
         </div>
         <div id="article-list"></div>
         <div class="pagination">
@@ -365,6 +367,7 @@ def generate_index_page(articles_metadata):
     <script>
         const searchBar = document.getElementById('search-bar');
         const dateFilter = document.getElementById('date-filter');
+        const personaFilter=document.getElementById('persona-filter');
         const articleList = document.getElementById('article-list');
         const prevPageBtn = document.getElementById('prev-page');
         const nextPageBtn = document.getElementById('next-page');
@@ -386,13 +389,38 @@ def generate_index_page(articles_metadata):
             .then(data => {
                 articles = data;
                 populateDateFilter();
+                populatePersonaFilter();
                 renderArticles();
             })
             .catch(error => {
                 console.error('JSON読み込みエラー:', error);
                 articleList.innerHTML = '<p>記事データを読み込めませんでした。</p>';
             });
-        
+        function addWheelEventToPersonalityFilter() {
+    personalityFilter.addEventListener('wheel', (event) => {
+        event.preventDefault(); // デフォルトのスクロール動作を止める
+
+        const currentIndex = personalityFilter.selectedIndex; // 現在選ばれてるオプションのインデックス
+        const totalOptions = personalityFilter.options.length; // オプションの総数
+
+        // ホイールの方向をチェック（上か下か）
+        if (event.deltaY < 0) {
+            // 上にスクロール（前のオプションへ）
+            if (currentIndex > 0) {
+                personalityFilter.selectedIndex = currentIndex - 1;
+            }
+        } else if (event.deltaY > 0) {
+            // 下にスクロール（次のオプションへ）
+            if (currentIndex < totalOptions - 1) {
+                personalityFilter.selectedIndex = currentIndex + 1;
+            }
+        }
+
+        // 選択が変わったら記事を再描画
+        currentPage = 1;
+        renderArticles();
+    });
+}
         function populateDateFilter() {
             const dates = [...new Set(articles.map(a => a.date))].sort().reverse();
             dates.forEach(date => {
@@ -402,10 +430,19 @@ def generate_index_page(articles_metadata):
                 dateFilter.appendChild(option);
             });
         }
-        
+        function populatePersonaFilter() { // 新しい関数
+            const personalities = [...new Set(articles.map(a => a.personality))].sort();
+            personalities.forEach(personality => {
+                const option = document.createElement('option');
+                option.value = personality;
+                option.textContent = personality;
+                personaFilter.appendChild(option);
+            });
+        }
         function renderArticles() {
             const query = searchBar.value.toLowerCase();
             const selectedDate = dateFilter.value;
+            const selectedPersona = personaFilter.value;
 
             const filteredArticles = articles.filter(a => {
                 const matchesSearch = query === '' || 
@@ -413,7 +450,8 @@ def generate_index_page(articles_metadata):
                     a.date.includes(query) || 
                     a.personality.toLowerCase().includes(query);
                 const matchesDate = selectedDate === '' || a.date === selectedDate;
-                return matchesSearch && matchesDate;
+                const matchesPersona = selectedPersona === '' || a.personality === selectedPersona;
+                return matchesSearch && matchesDate && matchesPersona;
             });
 
             const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
@@ -482,6 +520,7 @@ def generate_index_page(articles_metadata):
             const page = parseInt(pageInput.value);
             const totalPages = Math.ceil(articles.filter(a => 
                 (dateFilter.value === '' || a.date === dateFilter.value) &&
+                (personaFilter.value === '' || a.personality === personaFilter.value) && 
                 (searchBar.value === '' || a.title.toLowerCase().includes(searchBar.value.toLowerCase()) || 
                  a.date.includes(searchBar.value) || a.personality.toLowerCase().includes(searchBar.value.toLowerCase()))
             ).length / itemsPerPage);
@@ -502,6 +541,10 @@ def generate_index_page(articles_metadata):
         });
         
         dateFilter.addEventListener('change', () => {
+            currentPage = 1;
+            renderArticles();
+        });
+        personaFilter.addEventListener('change', () => { // 新しいイベントリスナー
             currentPage = 1;
             renderArticles();
         });
