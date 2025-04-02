@@ -2,7 +2,7 @@ name: Generate and Deploy News Articles
 
 on:
   schedule:
-    - cron: "0 */1 * * *" # 1時間ごとに実行（任意で調整）
+    - cron: "0 */2 * * *" # 1時間ごとに実行（任意で調整）
   workflow_dispatch: # 手動実行も可能にする
 
 jobs:
