@@ -10,34 +10,39 @@
         footer { margin-top: 20px; border-top: 1px solid #ddd; padding-top: 5px; font-size: 0.8em; color: #666; }
         ul { list-style-type: none; padding: 0; margin: 0; }
         li { padding: 5px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .filter-container { display: flex; gap: 5px; margin-bottom: 10px; }
-        #search-bar { width: 70%; padding: 5px; font-size: 0.9em; }
-        #date-filter { width: 30%; padding: 5px; font-size: 0.9em; }
+        .filter-container { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; } /* flex-wrap追加 */
+        #search-bar { width: calc(50% - 5px); padding: 5px; font-size: 0.9em; min-width: 150px; } /* 幅調整 */
+        #date-filter { width: calc(25% - 5px); padding: 5px; font-size: 0.9em; min-width: 100px; } /* 幅調整 */
+        #persona-filter { width: calc(25% - 5px); padding: 5px; font-size: 0.9em; min-width: 100px; } /* 幅調整 */
         .pagination { margin-top: 10px; text-align: center; }
         .pagination button { padding: 3px 8px; margin: 0 3px; cursor: pointer; }
         .pagination span { margin: 0 5px; font-size: 0.9em; }
         .pagination input { width: 50px; padding: 3px; text-align: center; }
-        .bookmark-btn{ 
-            background: #4CAF50; 
-            color: white; 
-            border: none; 
-            padding: 2px 5px; 
-            cursor: pointer; 
-            font-size: 0.8em; 
-            border-radius: 2px; 
+        .bookmark-btn{
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            border-radius: 2px;
+            margin-left: 5px; /* 左にマージン追加 */
+            flex-shrink: 0; /* ボタンが縮まないように */
         }
-        .bookmark-btn.bookmarked{ 
-            background: #af4c4c; 
-            color: white; 
-            border: none; 
-            padding: 2px 5px; 
-            cursor: pointer; 
-            font-size: 0.8em; 
-            border-radius: 2px; 
+        .bookmark-btn.bookmarked{
+            background: #af4c4c;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            border-radius: 2px;
+            margin-left: 5px; /* 左にマージン追加 */
+            flex-shrink: 0; /* ボタンが縮まないように */
         }
         .bookmark-btn:hover { background: #45a049; }
         .bookmark-btn.bookmarked:hover { background: #a04545; }
-        a { text-decoration: none; color: #0066cc; word-wrap: break-word; max-width: 80%; } /* タイトル折り返し */
+        a { text-decoration: none; color: #0066cc; word-wrap: break-word; flex-grow: 1; } /* aタグがスペースを埋めるように */
         a:hover { text-decoration: underline; }
         .hidden { display: none; }
         h2 { margin: 10px 0 5px; font-size: 1.2em; color: #333; } /* 日付見出し */
@@ -54,7 +59,6 @@
             <input type="text" id="search-bar" placeholder="検索...">
             <select id="date-filter"><option value="">全日付</option></select>
             <select id="persona-filter"><option value="">全文体</option></select>
-            
         </div>
         <div id="article-list"></div>
         <div class="pagination">
@@ -72,18 +76,20 @@
     <script>
         const searchBar = document.getElementById('search-bar');
         const dateFilter = document.getElementById('date-filter');
-        const personaFilter=document.getElementById('persona-filter');
+        const personaFilter = document.getElementById('persona-filter'); // persona-filter の typo を修正
         const articleList = document.getElementById('article-list');
         const prevPageBtn = document.getElementById('prev-page');
         const nextPageBtn = document.getElementById('next-page');
         const pageInfo = document.getElementById('page-info');
         const pageInput = document.getElementById('page-input');
         const goPageBtn = document.getElementById('go-page');
-        
+
         const itemsPerPage = 100;
         let currentPage = 1;
         let articles = [];
-        
+        let dateCounts = {}; // 日付ごとの記事数を格納
+        let personaCounts = {}; // 文体ごとの記事数を格納
+
         fetch('./articles.json')
             .then(response => {
                 if (!response.ok) {
@@ -93,73 +99,110 @@
             })
             .then(data => {
                 articles = data;
-                populateDateFilter();
-                populatePersonaFilter();
+
+                // 記事数をカウント
+                articles.forEach(a => {
+                    dateCounts[a.date] = (dateCounts[a.date] || 0) + 1;
+                    personaCounts[a.personality] = (personaCounts[a.personality] || 0) + 1;
+                });
+
+                // フィルターオプションを生成（記事数を渡す）
+                populateDateFilter(dateCounts);
+                populatePersonaFilter(personaCounts);
                 renderArticles();
+                // addWheelEventToPersonalityFilter(); // この関数は定義されていないためコメントアウト or 実装が必要
             })
             .catch(error => {
                 console.error('JSON読み込みエラー:', error);
                 articleList.innerHTML = '<p>記事データを読み込めませんでした。</p>';
             });
+
+        /*
+        // persona-filterにホイールイベントを追加する関数（必要であれば実装）
         function addWheelEventToPersonalityFilter() {
-    personalityFilter.addEventListener('wheel', (event) => {
-        event.preventDefault(); // デフォルトのスクロール動作を止める
+            personaFilter.addEventListener('wheel', (event) => {
+                event.preventDefault(); // デフォルトのスクロール動作を止める
 
-        const currentIndex = personalityFilter.selectedIndex; // 現在選ばれてるオプションのインデックス
-        const totalOptions = personalityFilter.options.length; // オプションの総数
+                const currentIndex = personaFilter.selectedIndex; // 現在選ばれてるオプションのインデックス
+                const totalOptions = personaFilter.options.length; // オプションの総数
 
-        // ホイールの方向をチェック（上か下か）
-        if (event.deltaY < 0) {
-            // 上にスクロール（前のオプションへ）
-            if (currentIndex > 0) {
-                personalityFilter.selectedIndex = currentIndex - 1;
-            }
-        } else if (event.deltaY > 0) {
-            // 下にスクロール（次のオプションへ）
-            if (currentIndex < totalOptions - 1) {
-                personalityFilter.selectedIndex = currentIndex + 1;
-            }
+                // ホイールの方向をチェック（上か下か）
+                if (event.deltaY < 0) {
+                    // 上にスクロール（前のオプションへ）
+                    if (currentIndex > 0) {
+                        personaFilter.selectedIndex = currentIndex - 1;
+                    }
+                } else if (event.deltaY > 0) {
+                    // 下にスクロール（次のオプションへ）
+                    if (currentIndex < totalOptions - 1) {
+                        personaFilter.selectedIndex = currentIndex + 1;
+                    }
+                }
+
+                // 選択が変わったら記事を再描画
+                currentPage = 1;
+                renderArticles();
+            });
         }
+        */
 
-        // 選択が変わったら記事を再描画
-        currentPage = 1;
-        renderArticles();
-    });
-}
-        function populateDateFilter() {
+        // 日付フィルターに記事数を表示する関数
+        function populateDateFilter(counts) {
             const dates = [...new Set(articles.map(a => a.date))].sort().reverse();
+            // 既存のオプションをクリア（「全日付」は残す）
+            while (dateFilter.options.length > 1) {
+                dateFilter.remove(1);
+            }
+            // 全記事数を「全日付」オプションに表示（任意）
+            const totalArticles = articles.length;
+            dateFilter.options[0].textContent = `全日付 (${totalArticles}件)`;
+
             dates.forEach(date => {
                 const option = document.createElement('option');
                 option.value = date;
-                option.textContent = date;
+                const count = counts[date] || 0;
+                option.textContent = `${date} (${count}件)`;
                 dateFilter.appendChild(option);
             });
         }
-        function populatePersonaFilter() { // 新しい関数
+
+        // 文体フィルターに記事数を表示する関数
+        function populatePersonaFilter(counts) {
             const personalities = [...new Set(articles.map(a => a.personality))].sort();
+            // 既存のオプションをクリア（「全文体」は残す）
+            while (personaFilter.options.length > 1) {
+                personaFilter.remove(1);
+            }
+            // 全記事数を「全文体」オプションに表示（任意）
+            const totalArticles = articles.length;
+            personaFilter.options[0].textContent = `全文体 (${totalArticles}件)`;
+
             personalities.forEach(personality => {
                 const option = document.createElement('option');
                 option.value = personality;
-                option.textContent = personality;
+                const count = counts[personality] || 0;
+                option.textContent = `${personality} (${count}件)`;
                 personaFilter.appendChild(option);
             });
         }
+
         function renderArticles() {
             const query = searchBar.value.toLowerCase();
             const selectedDate = dateFilter.value;
             const selectedPersona = personaFilter.value;
 
             const filteredArticles = articles.filter(a => {
-                const matchesSearch = query === '' || 
-                    a.title.toLowerCase().includes(query) || 
-                    a.date.includes(query) || 
-                    a.personality.toLowerCase().includes(query);
+                const matchesSearch = query === '' ||
+                    a.title.toLowerCase().includes(query) ||
+                    a.date.includes(query) ||
+                    (a.personality && a.personality.toLowerCase().includes(query)); // personalityが存在するかチェック
                 const matchesDate = selectedDate === '' || a.date === selectedDate;
                 const matchesPersona = selectedPersona === '' || a.personality === selectedPersona;
                 return matchesSearch && matchesDate && matchesPersona;
             });
 
             const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+            currentPage = Math.max(1, Math.min(currentPage, totalPages || 1)); // フィルター変更時にページ番号を調整
             const start = (currentPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const paginatedArticles = filteredArticles.slice(start, end);
@@ -171,86 +214,111 @@
             });
 
             articleList.innerHTML = '';
+            // 日付でソートして表示
             Object.keys(articlesByDate).sort().reverse().forEach(date => {
                 const section = document.createElement('div');
                 section.innerHTML = `<h2>${date}</h2>`;
                 const ul = document.createElement('ul');
-                articlesByDate[date].forEach(a => {
+                // 日付内の記事リストを（必要なら）タイトル等でソート
+                articlesByDate[date].sort((a, b) => a.title.localeCompare(b.title, 'ja')).forEach(a => {
                     const li = document.createElement('li');
 
-                    // ボタン要素を作成
+                    // リンク要素
+                    const link = document.createElement('a');
+                    link.href = a.url;
+                    link.title = `${a.title} (${a.personality || '不明'}風, ${a.date})`;
+                    link.textContent = `${a.title} (${a.personality || '不明'}風)`; // personalityがない場合も考慮
+
+                    // ボタン要素
                     const button = document.createElement('button');
                     button.classList.add('bookmark-btn');
                     button.setAttribute('data-title', a.title);
                     button.setAttribute('data-url', a.url);
                     button.setAttribute('data-date', a.date);
+                    // ブックマーク状態に応じて初期テキスト設定 (bookmark.js 側で処理される想定だが念のため)
+                    // button.textContent = isBookmarked(a.url) ? '解除' : '追加';
 
-                    li.innerHTML = `
-                        <a href="${a.url}" title="${a.title} (${a.personality}風, ${a.date})">
-                            ${a.title} (${a.personality}風)
-                        </a>
-                    `;
-
-                    // ボタンをリストに追加
-                    li.appendChild(button);
+                    li.appendChild(link); // リンクを先に追加
+                    li.appendChild(button); // ボタンを後に追加
                     ul.appendChild(li);
                 });
                 section.appendChild(ul);
                 articleList.appendChild(section);
             });
 
-            pageInfo.textContent = totalPages > 0 ? `ページ ${currentPage} / ${totalPages}` : '記事なし';
+            pageInfo.textContent = totalPages > 0 ? `ページ ${currentPage} / ${totalPages}` : '該当記事なし';
             pageInput.max = totalPages;
+            pageInput.placeholder = totalPages > 0 ? `1-${totalPages}` : 'ページ'; // プレースホルダー更新
             prevPageBtn.disabled = currentPage === 1;
             nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
 
-            // ★ 記事リスト生成後にブックマークボタンを更新
-            updateBookmarkButtons();
+            // 記事リスト生成後にブックマークボタンを更新
+            updateBookmarkButtons(); // bookmark.js 内の関数を呼び出す
         }
 
-        
+
         prevPageBtn.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
                 renderArticles();
+                window.scrollTo(0, 0); // ページトップへスクロール
             }
         });
-        
+
         nextPageBtn.addEventListener('click', () => {
+            // totalPages の再計算が必要な場合があるため renderArticles 内で制限するのが確実
             currentPage++;
             renderArticles();
+            window.scrollTo(0, 0); // ページトップへスクロール
         });
-        
+
         goPageBtn.addEventListener('click', () => {
             const page = parseInt(pageInput.value);
-            const totalPages = Math.ceil(articles.filter(a => 
-                (dateFilter.value === '' || a.date === dateFilter.value) &&
-                (personaFilter.value === '' || a.personality === personaFilter.value) && 
-                (searchBar.value === '' || a.title.toLowerCase().includes(searchBar.value.toLowerCase()) || 
-                 a.date.includes(searchBar.value) || a.personality.toLowerCase().includes(searchBar.value.toLowerCase()))
-            ).length / itemsPerPage);
-            if (page >= 1 && page <= totalPages) {
+             // totalPages を現在のフィルター状態で再計算
+            const query = searchBar.value.toLowerCase();
+            const selectedDate = dateFilter.value;
+            const selectedPersona = personaFilter.value;
+            const filteredCount = articles.filter(a => {
+                 const matchesSearch = query === '' ||
+                    a.title.toLowerCase().includes(query) ||
+                    a.date.includes(query) ||
+                    (a.personality && a.personality.toLowerCase().includes(query));
+                const matchesDate = selectedDate === '' || a.date === selectedDate;
+                const matchesPersona = selectedPersona === '' || a.personality === selectedPersona;
+                return matchesSearch && matchesDate && matchesPersona;
+            }).length;
+            const totalPages = Math.ceil(filteredCount / itemsPerPage);
+
+            if (!isNaN(page) && page >= 1 && page <= totalPages) {
                 currentPage = page;
                 renderArticles();
+                window.scrollTo(0, 0); // ページトップへスクロール
+            } else if (totalPages > 0) {
+                alert(`ページ番号は1から${totalPages}の間で入力してください。`);
+            } else {
+                 alert(`現在表示できるページがありません。`);
             }
             pageInput.value = ''; // 入力後クリア
         });
-        
+
         pageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') goPageBtn.click();
+            if (e.key === 'Enter') {
+                 e.preventDefault(); // フォーム送信を抑制
+                 goPageBtn.click();
+            }
         });
-        
+
         searchBar.addEventListener('input', () => {
-            currentPage = 1;
+            currentPage = 1; // 検索時は1ページ目に戻る
             renderArticles();
         });
-        
+
         dateFilter.addEventListener('change', () => {
-            currentPage = 1;
+            currentPage = 1; // フィルター変更時は1ページ目に戻る
             renderArticles();
         });
-        personaFilter.addEventListener('change', () => { // 新しいイベントリスナー
-            currentPage = 1;
+        personaFilter.addEventListener('change', () => {
+            currentPage = 1; // フィルター変更時は1ページ目に戻る
             renderArticles();
         });
     </script>
