@@ -27,7 +27,6 @@ username = os.environ.get('USERNAME')
 password = os.environ.get('PASSWORD')
 phone=os.environ.get('PHONE')
 mail=os.environ.get('MAIL')
-cookies=os.environ.get('COOKIES')
 
 client = Client('ja')
 
@@ -128,7 +127,7 @@ def generate_news_article():
     
 async def generate_news_article2():
     # アカウントにログイン
-    client.load_cookies(cookies)
+    client.load_cookies('cookies.json')
     output=await client.get_trends('trending',20)
     xtrend=random.choice(output).name
 
@@ -833,7 +832,7 @@ def setup_selenium_driver():
     print(driver.title)  # 日本語のタイトルが表示されるはず
     return driver
 async def send_tweet(content):
-    client.load_cookies(cookies)
+    client.load_cookies('cookies.json')
     await client.create_tweet(content)
     
     
