@@ -599,7 +599,8 @@ def generate_index_page(articles_metadata):
                 section.innerHTML = `<h2>${date}</h2>`;
                 const ul = document.createElement('ul');
                 // 日付内の記事リストを（必要なら）タイトル等でソート
-                articlesByDate[date].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                articlesByDate[date].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)).forEach(a => {
+                    const li = document.createElement('li');
 
 
                     // リンク要素
