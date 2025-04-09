@@ -857,6 +857,8 @@ async def main():
     content_path, metadata_path = save_article(content, metadata)
     print(f"記事を保存しました: {content_path}")
 
+    update_website()
+
     tweet_text = get_tweet_content()
     await send_tweet(tweet_text)  # awaitで呼び出し
     print("ツイートを送信しました")
