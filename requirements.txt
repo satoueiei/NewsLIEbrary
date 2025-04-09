@@ -4,3 +4,4 @@ requests
 markdown
 selenium
 webdriver-manager
+twikit
