@@ -26,6 +26,12 @@ jobs:
     - name: ChromeとChromeDriverをセットアップ
       uses: browser-actions/setup-chrome@latest
 
+    - name: Create cookies.json for Twitter authentication
+      env:
+        COOKIES: ${{ secrets.COOKIES }}  # SecretsからクッキーJSONを取得
+      run: |
+        echo "$COOKIES" > cookies.json
+        
     - name: Run news generation script
       env:
         GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
@@ -33,7 +39,6 @@ jobs:
         PASSWORD: ${{ secrets.PASSWORD }}
         MAIL: ${{ secrets.MAIL }}
         PHONE: ${{ secrets.PHONE }}
-        COOKIES: ${{ secrets.COOKIES }}
       run: |
         python enhanced_news_generator.py
 
