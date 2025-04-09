@@ -129,7 +129,8 @@ async def generate_news_article2():
     # アカウントにログイン
     client.load_cookies('cookies.json')
     output=await client.get_trends('trending',20)
-
+    locations = await client.get_available_locations()
+    print(locations)
     for i in output:
         print(i.name)
     xtrend=random.choice(output).name
