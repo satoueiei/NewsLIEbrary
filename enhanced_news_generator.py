@@ -129,6 +129,9 @@ async def generate_news_article2():
     # アカウントにログイン
     client.load_cookies('cookies.json')
     output=await client.get_trends('trending',20)
+
+    for i in output:
+        print(i.name)
     xtrend=random.choice(output).name
 
     Ses = requests.Session()
