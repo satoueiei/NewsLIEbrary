@@ -836,7 +836,7 @@ async def send_tweet(content):
     await client.create_tweet(content)
     
     
-def main():
+async def main():
     # 既存の記事を読み込む
     articles = load_articles_json()
     sequel_candidate = find_sequel_candidate(articles, days_threshold=30)
@@ -850,16 +850,19 @@ def main():
             print("続編候補が見つかりましたが、今回は通常の記事を生成します")
             content, metadata = generate_news_article()
     else:
-        # 通常の記事を生成
+        # 通常の記事を生成（非同期）
         print("通常の記事を生成します")
-        content, metadata = asyncio.run(generate_news_article2())
+        content, metadata = await generate_news_article2()  # awaitで呼び出し
 
     content_path, metadata_path = save_article(content, metadata)
     print(f"記事を保存しました: {content_path}")
 
-    tweet_text=get_tweet_content()
-    asyncio.run(send_tweet(tweet_text))
-    ''' 
+    tweet_text = get_tweet_content()
+    await send_tweet(tweet_text)  # awaitで呼び出し
+    print("ツイートを送信しました")
+
+    # Selenium部分はコメントアウトされてるので、そのままにしてる
+    '''
     driver = setup_selenium_driver()
     update_website()
     try:
@@ -870,9 +873,8 @@ def main():
         print(posts)
     finally:
         driver.quit()
-'''
-    
+    '''
     print("ウェブサイトを更新しました")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())  # 1回だけasyncio.run()
