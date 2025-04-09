@@ -33,6 +33,7 @@ jobs:
         PASSWORD: ${{ secrets.PASSWORD }}
         MAIL: ${{ secrets.MAIL }}
         PHONE: ${{ secrets.PHONE }}
+        COOKIES: ${{ secrets.COOKIES }}
       run: |
         python enhanced_news_generator.py
 
