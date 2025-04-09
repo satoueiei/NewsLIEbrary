@@ -131,7 +131,7 @@ async def generate_news_article2():
     output=await client.get_place_trends(23424856)
     for i in output["trends"]:
         print(i.name)
-    xtrend=random.choice(output).name
+    xtrend=random.choice(output["trends"]).name
 
     Ses = requests.Session()
     URL = "https://ja.wikipedia.org/w/api.php"
