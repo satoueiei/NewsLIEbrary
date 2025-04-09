@@ -193,7 +193,7 @@ async def generate_news_article2():
     metadata = {
         "date": now.strftime("%Y-%m-%d"),
         "time": time_string,
-        "theme": theme,
+        "theme": xtrend,
         "wiki_title": wiki_title,
         "personality": personality,
         "timestamp": now.timestamp(),
