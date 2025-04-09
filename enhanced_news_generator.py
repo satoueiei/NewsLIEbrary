@@ -16,6 +16,8 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import asyncio
+from twikit import Client
 
 # Geminiと接続
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
@@ -25,6 +27,9 @@ username = os.environ.get('USERNAME')
 password = os.environ.get('PASSWORD')
 phone=os.environ.get('PHONE')
 mail=os.environ.get('MAIL')
+cookies=os.environ.get('COOKIES')
+
+client = Client('ja')
 
 def load_articles_json():
     json_path = "docs/articles.json"
@@ -120,7 +125,85 @@ def generate_news_article():
     }
     
     return content, metadata
+    
+async def generate_news_article2():
+    # アカウントにログイン
+    client.load_cookies(cookies)
+    output=await client.get_trends('trending',20)
+    xtrend=random.choice(output).name
 
+    Ses = requests.Session()
+    URL = "https://ja.wikipedia.org/w/api.php"
+    PARAMS = {
+        "action": "query",
+        "format": "json",
+        "list": "random",
+        "rnlimit": "10",
+        "rnnamespace": "0"
+    }
+    R = Ses.get(url=URL, params=PARAMS)
+    DATA = R.json()
+    RANDOMS = DATA["query"]["random"]
+    wiki_title = random.choice(RANDOMS)["title"]
+
+    model = genai.GenerativeModel("gemini-2.0-pro-exp-02-05")
+
+    personalities = [
+        "皮肉屋", "楽観主義者", "陰謀論者", "ドラマチック", "冷静分析家",
+        "詩人", "お調子者", "悲観主義者", "科学オタク", "おばちゃん",
+        "軍人風", "ヒーロー気取り", "ノスタルジック", "子供っぽい", "哲学者",
+        "ゴシップ好き", "クイズマスター", "ファンタジー作家", "ロボット", "探偵",
+        "スポーツ実況者", "お笑い芸人", "過激派", "ヒッピー", "ビジネスマン",
+        "カウボーイ", "医者", "占い師", "革命家", "オカルト信者",
+        "美食家", "映画監督", "教師", "ギャンブラー", "アーティスト",
+        "マッドサイエンティスト", "お坊さん", "海賊", "旅行者", "ラッパー",
+        "気象予報士", "ゲーム実況者", "スパイ", "お姫様", "ゾンビ",
+        "エンジニア", "宇宙人", "タイムトラベラー", "恋愛マスター", "怠け者",
+        "ひねくれもの","批評家","厨二病","ヤンデレ","ツンデレ",
+        "なんJ民","コンピューターウイルス","陰キャ","変態","上位存在",
+        "おじさん構文","チャラ男","ヒステリック","うちなーぐち","関西弁",
+        "淫夢厨","陽キャ","原始人","酔っぱらった人","説教",
+        "英語","クソガキ","古","激情家","おバカちゃん",
+        "普通の記者","炎上系記者","インプ稼ぎ記者","やる気ない記者","熱意ある記者",
+        "海外の記者","お嬢様","異世界転生者","昭和の頑固おやじ","ネットミーム中毒者",
+        "武士","神父","キリシタン","ずんだもん","ゆっくり実況"
+    ]
+
+    personality = random.choice(personalities)
+    
+    now = datetime.now()
+    date_string = now.strftime("%Y年%m月%d日")
+    time_string = now.strftime("%H:%M")
+    
+    prompt = f"架空のニュースサイト、「News LIE-brary」に載せるための、「{xtrend}」と「{wiki_title}」をテーマにした架空のネットニュースをマークダウン形式で作ってください。「{personality}」風な文体で、1000~2000字程度を参考に作ってください。タイトルをつけ、タイトルにはニュースサイトの名前を【】で囲んで、h1として必ず記述してください。日付は {date_string} とし、記事の一番上に表示してください。ただし、ニュースサイトのほかの部分でこれが架空であることを示しますので、記事本文にはこれが架空であることを示す内容は入れないことと、回答はニュース記事部分だけにしてください。"
+    
+    response = model.generate_content(prompt)
+    content = response.text
+
+    #続きそうか判定
+    question=f"以下のニュース記事の本文を読み、この記事に対して「続報を出す」といったような、続編執筆に対する明確な意思表示が記事内に存在するかどうかを判断してください。記事内に「続報を出す」といった明確な言葉による宣言が存在する場合には「Y」、存在しない場合には「N」とだけ答えてください。記事の内容から推測される今後の展開や、記者の意図に関する解釈は含めないでください。{content}"
+    ansewer=model.generate_content(question)
+    sequel=ansewer.text
+    
+    
+    
+
+    title_match = re.search(r"^\s*#+\s*【News LIE-brary】[^\n]+", content, re.MULTILINE)
+    article_title = title_match.group(0).replace("#", "").strip() if title_match else "無題の記事"
+    
+    metadata = {
+        "date": now.strftime("%Y-%m-%d"),
+        "time": time_string,
+        "theme": theme,
+        "wiki_title": wiki_title,
+        "personality": personality,
+        "timestamp": now.timestamp(),
+        "title": article_title,
+        "sequel": sequel
+    }
+    
+    return content, metadata
+    
 def generate_sequel_article(prev_article):
     # 前回の記事内容を読み込む
     prev_url = prev_article["url"]
@@ -749,7 +832,11 @@ def setup_selenium_driver():
     driver = webdriver.Chrome(options=chrome_options)
     print(driver.title)  # 日本語のタイトルが表示されるはず
     return driver
-
+async def send_tweet(content):
+    client.load_cookies(cookies)
+    await client.create_tweet(content)
+    
+    
 def main():
     # 既存の記事を読み込む
     articles = load_articles_json()
@@ -766,12 +853,14 @@ def main():
     else:
         # 通常の記事を生成
         print("通常の記事を生成します")
-        content, metadata = generate_news_article()
+        content, metadata = asyncio.run(generate_news_article2())
 
     content_path, metadata_path = save_article(content, metadata)
     print(f"記事を保存しました: {content_path}")
 
- 
+    tweet_text=get_tweet_content()
+    asyncio.run(send_tweet(tweet_text))
+    ''' 
     driver = setup_selenium_driver()
     update_website()
     try:
@@ -782,7 +871,7 @@ def main():
         print(posts)
     finally:
         driver.quit()
-
+'''
     
     print("ウェブサイトを更新しました")
 
