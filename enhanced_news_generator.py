@@ -126,12 +126,14 @@ def generate_news_article():
     return content, metadata
     
 async def generate_news_article2():
+    feed = feedparser.parse('https://trends.google.co.jp/trending/rss?geo=JP')
+    titles = [entry['title'] for entry in feed['entries']]
     # アカウントにログイン
     client.load_cookies('cookies.json')
     output=await client.get_place_trends(23424856)
     for i in output["trends"]:
         print(i.name)
-    xtrend=random.choice(output["trends"]).name
+    
 
     Ses = requests.Session()
     URL = "https://ja.wikipedia.org/w/api.php"
@@ -145,7 +147,11 @@ async def generate_news_article2():
     R = Ses.get(url=URL, params=PARAMS)
     DATA = R.json()
     RANDOMS = DATA["query"]["random"]
-    wiki_title = random.choice(RANDOMS)["title"]
+    wiki_titles = [item["title"] for item in random.sample(RANDOMS, 2)]  # 修正: リスト内包表記でタイトル抽出
+    xtrends = [trend["name"] for trend in random.sample(output["trends"], 2)]  # 修正: リスト内包表記でname抽出
+    gtrend = random.sample(titles, 2)
+    themes = wiki_titles + xtrends + gtrend  # 修正: すべてリストなので+で結合
+    print(themes)
 
     model = genai.GenerativeModel("gemini-2.0-pro-exp-02-05")
 
@@ -175,8 +181,9 @@ async def generate_news_article2():
     now = datetime.now()
     date_string = now.strftime("%Y年%m月%d日")
     time_string = now.strftime("%H:%M")
+    selected_themes=random.sample(themes,2)
     
-    prompt = f"架空のニュースサイト、「News LIE-brary」に載せるための、「{xtrend}」と「{wiki_title}」をテーマにした架空のネットニュースをマークダウン形式で作ってください。「{personality}」風な文体で、1000~2000字程度を参考に作ってください。タイトルをつけ、タイトルにはニュースサイトの名前を【】で囲んで、h1として必ず記述してください。日付は {date_string} とし、記事の一番上に表示してください。ただし、ニュースサイトのほかの部分でこれが架空であることを示しますので、記事本文にはこれが架空であることを示す内容は入れないことと、回答はニュース記事部分だけにしてください。"
+    prompt = f"架空のニュースサイト、「News LIE-brary」に載せるための、「{selected_themes[0]}」と「{selected_themes[1]}」をテーマにした架空のネットニュースをマークダウン形式で作ってください。「{personality}」風な文体で、1000~2000字程度を参考に作ってください。タイトルをつけ、タイトルにはニュースサイトの名前を【】で囲んで、h1として必ず記述してください。日付は {date_string} とし、記事の一番上に表示してください。ただし、ニュースサイトのほかの部分でこれが架空であることを示しますので、記事本文にはこれが架空であることを示す内容は入れないことと、回答はニュース記事部分だけにしてください。"
     
     response = model.generate_content(prompt)
     content = response.text
@@ -195,8 +202,8 @@ async def generate_news_article2():
     metadata = {
         "date": now.strftime("%Y-%m-%d"),
         "time": time_string,
-        "theme": xtrend,
-        "wiki_title": wiki_title,
+        "theme": selected_themes[0],
+        "wiki_title": selected_themes[1],
         "personality": personality,
         "timestamp": now.timestamp(),
         "title": article_title,
