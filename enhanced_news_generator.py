@@ -148,7 +148,7 @@ async def generate_news_article2():
     DATA = R.json()
     RANDOMS = DATA["query"]["random"]
     wiki_titles = [item["title"] for item in random.sample(RANDOMS, 2)]  # 修正: リスト内包表記でタイトル抽出
-    xtrends = [trend["name"] for trend in random.sample(output["trends"], 2)]  # 修正: リスト内包表記でname抽出
+    xtrends = [trend.name for trend in random.sample(output["trends"], 2)]
     gtrend = random.sample(titles, 2)
     themes = wiki_titles + xtrends + gtrend  # 修正: すべてリストなので+で結合
     print(themes)
