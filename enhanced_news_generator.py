@@ -858,7 +858,7 @@ async def main():
             content, metadata = generate_sequel_article(sequel_candidate)
         else:
             print("続編候補が見つかりましたが、今回は通常の記事を生成します")
-            content, metadata = generate_news_article()
+            content, metadata = await generate_news_article2()
     else:
         # 通常の記事を生成（非同期）
         print("通常の記事を生成します")
